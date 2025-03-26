@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useLanguage } from "@/contexts/language-context"
 import { DownloadButton } from "./download-button"
+import VideoRating from "./video-rating"
+import VideoComments from "./video-comments"
 
 interface VideoSectionProps {
   selectedMuscle: string | null
@@ -166,6 +168,14 @@ export default function VideoSection({ selectedMuscle }: VideoSectionProps) {
           </div>
         )}
       </div>
+
+      {/* Video Rating Component */}
+      <div className="mt-4 border-t pt-4">
+        <VideoRating videoId={currentVideo.id} muscleId={selectedMuscle} />
+      </div>
+
+      {/* Video Comments Component */}
+      <VideoComments videoId={currentVideo.id} />
     </div>
   )
 }

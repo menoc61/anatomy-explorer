@@ -1,0 +1,458 @@
+"use client"
+
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+
+// Define the i18n context type
+interface I18nContextType {
+  t: (key: string, params?: Record<string, string>) => string
+  changeLanguage: (lang: string) => void
+  currentLanguage: string
+}
+
+// Create the context
+const I18nContext = createContext<I18nContextType | undefined>(undefined)
+
+// Define translations for different languages
+const translations: Record<string, Record<string, string>> = {
+  en: {
+    // General
+    "app.title": "Anatomy Explorer",
+    "app.subtitle": "Interactive 3D human anatomy explorer",
+    "app.loading": "Loading...",
+    "app.error": "An error occurred",
+    "app.success": "Success",
+
+    // Navigation
+    "nav.home": "Home",
+    "nav.learn": "Learn",
+    "nav.videos": "Videos",
+    "nav.account": "Account",
+    "nav.settings": "Settings",
+    "nav.logout": "Log out",
+    "nav.admin": "Admin Dashboard",
+    "nav.profile": "Profile",
+
+    // Auth
+    "auth.login": "Login",
+    "auth.signup": "Sign up",
+    "auth.email": "Email",
+    "auth.password": "Password",
+    "auth.forgotPassword": "Forgot your password?",
+    "auth.name": "Name",
+    "auth.confirmPassword": "Confirm Password",
+    "auth.createAccount": "Create account",
+    "auth.alreadyHaveAccount": "Already have an account?",
+    "auth.dontHaveAccount": "Don't have an account?",
+    "auth.loginWithGoogle": "Login with Google",
+    "auth.loginWithFacebook": "Login with Facebook",
+
+    // Subscription
+    "subscription.title": "Subscription Plans",
+    "subscription.basic": "Basic",
+    "subscription.premium": "Premium",
+    "subscription.professional": "Professional",
+    "subscription.current": "Current Plan",
+    "subscription.upgrade": "Upgrade Now",
+    "subscription.manage": "Manage Subscription",
+    "subscription.cancel": "Cancel Subscription",
+
+    // Settings
+    "settings.title": "Settings",
+    "settings.language": "Language",
+    "settings.theme": "Theme",
+    "settings.notifications": "Notifications",
+    "settings.save": "Save Changes",
+    "settings.account": "Account",
+    "settings.privacy": "Privacy",
+    "settings.appearance": "Appearance",
+    "settings.accessibility": "Accessibility",
+    "settings.database": "Database",
+    "settings.api": "API",
+
+    // Theme
+    "theme.light": "Light",
+    "theme.dark": "Dark",
+    "theme.system": "System",
+
+    // Database
+    "database.title": "Database Settings",
+    "database.connection": "Connection",
+    "database.prisma": "Prisma Configuration",
+    "database.supabase": "Supabase Configuration",
+    "database.url": "Database URL",
+    "database.apiKey": "API Key",
+    "database.test": "Test Connection",
+
+    // Admin
+    "admin.title": "Admin Dashboard",
+    "admin.users": "Users",
+    "admin.content": "Content",
+    "admin.videos": "Videos",
+    "admin.settings": "Settings",
+    "admin.stats": "Statistics",
+    "admin.addVideo": "Add Video",
+    "admin.editVideo": "Edit Video",
+    "admin.deleteVideo": "Delete Video",
+    "admin.videoTitle": "Video Title",
+    "admin.videoDescription": "Video Description",
+    "admin.videoUrl": "Video URL",
+    "admin.videoThumbnail": "Video Thumbnail",
+    "admin.videoDuration": "Video Duration",
+    "admin.videoPremium": "Premium Content",
+    "admin.videoMuscle": "Related Muscle",
+
+    // Muscles
+    "muscles.title": "Muscle Groups",
+    "muscles.select": "Select a muscle",
+    "muscles.overview": "Overview",
+    "muscles.function": "Function",
+    "muscles.conditions": "Conditions",
+    "muscles.videos": "Videos",
+    "muscles.origin": "Origin",
+    "muscles.insertion": "Insertion",
+
+    // User
+    "user.profile": "Profile",
+    "user.settings": "Settings",
+    "user.logout": "Logout",
+    "user.subscription": "Subscription",
+    "user.language": "Language",
+    "user.theme": "Theme",
+    "user.notifications": "Notifications",
+
+    // Actions
+    "actions.save": "Save",
+    "actions.cancel": "Cancel",
+    "actions.delete": "Delete",
+    "actions.edit": "Edit",
+    "actions.add": "Add",
+    "actions.search": "Search",
+    "actions.filter": "Filter",
+    "actions.sort": "Sort",
+    "actions.download": "Download",
+    "actions.share": "Share",
+    "actions.close": "Close",
+
+    // System
+    "system.status": "System Status",
+    "system.version": "Version",
+    "system.lastUpdate": "Last Update",
+    "system.maintenance": "Maintenance",
+    "system.backup": "Backup",
+    "system.restore": "Restore",
+    "system.logs": "System Logs",
+  },
+
+  fr: {
+    // General
+    "app.title": "Explorateur d'Anatomie",
+    "app.subtitle": "Explorateur interactif d'anatomie humaine en 3D",
+    "app.loading": "Chargement...",
+    "app.error": "Une erreur est survenue",
+    "app.success": "Succès",
+
+    // Navigation
+    "nav.home": "Accueil",
+    "nav.learn": "Apprendre",
+    "nav.videos": "Vidéos",
+    "nav.account": "Compte",
+    "nav.settings": "Paramètres",
+    "nav.logout": "Déconnexion",
+    "nav.admin": "Tableau de Bord Admin",
+    "nav.profile": "Profil",
+
+    // Auth
+    "auth.login": "Connexion",
+    "auth.signup": "S'inscrire",
+    "auth.email": "Email",
+    "auth.password": "Mot de passe",
+    "auth.forgotPassword": "Mot de passe oublié?",
+    "auth.name": "Nom",
+    "auth.confirmPassword": "Confirmer le mot de passe",
+    "auth.createAccount": "Créer un compte",
+    "auth.alreadyHaveAccount": "Vous avez déjà un compte?",
+    "auth.dontHaveAccount": "Vous n'avez pas de compte?",
+    "auth.loginWithGoogle": "Connexion avec Google",
+    "auth.loginWithFacebook": "Connexion avec Facebook",
+
+    // Subscription
+    "subscription.title": "Plans d'Abonnement",
+    "subscription.basic": "Basique",
+    "subscription.premium": "Premium",
+    "subscription.professional": "Professionnel",
+    "subscription.current": "Plan Actuel",
+    "subscription.upgrade": "Mettre à Niveau",
+    "subscription.manage": "Gérer l'Abonnement",
+    "subscription.cancel": "Annuler l'Abonnement",
+
+    // Settings
+    "settings.title": "Paramètres",
+    "settings.language": "Langue",
+    "settings.theme": "Thème",
+    "settings.notifications": "Notifications",
+    "settings.save": "Enregistrer les Modifications",
+    "settings.account": "Compte",
+    "settings.privacy": "Confidentialité",
+    "settings.appearance": "Apparence",
+    "settings.accessibility": "Accessibilité",
+    "settings.database": "Base de données",
+    "settings.api": "API",
+
+    // Theme
+    "theme.light": "Clair",
+    "theme.dark": "Sombre",
+    "theme.system": "Système",
+
+    // Database
+    "database.title": "Paramètres de Base de Données",
+    "database.connection": "Connexion",
+    "database.prisma": "Configuration Prisma",
+    "database.supabase": "Configuration Supabase",
+    "database.url": "URL de la Base de Données",
+    "database.apiKey": "Clé API",
+    "database.test": "Tester la Connexion",
+
+    // Admin
+    "admin.title": "Tableau de Bord Admin",
+    "admin.users": "Utilisateurs",
+    "admin.content": "Contenu",
+    "admin.videos": "Vidéos",
+    "admin.settings": "Paramètres",
+    "admin.stats": "Statistiques",
+    "admin.addVideo": "Ajouter une Vidéo",
+    "admin.editVideo": "Modifier la Vidéo",
+    "admin.deleteVideo": "Supprimer la Vidéo",
+    "admin.videoTitle": "Titre de la Vidéo",
+    "admin.videoDescription": "Description de la Vidéo",
+    "admin.videoUrl": "URL de la Vidéo",
+    "admin.videoThumbnail": "Miniature de la Vidéo",
+    "admin.videoDuration": "Durée de la Vidéo",
+    "admin.videoPremium": "Contenu Premium",
+    "admin.videoMuscle": "Muscle Associé",
+
+    // Muscles
+    "muscles.title": "Groupes Musculaires",
+    "muscles.select": "Sélectionnez un muscle",
+    "muscles.overview": "Aperçu",
+    "muscles.function": "Fonction",
+    "muscles.conditions": "Conditions",
+    "muscles.videos": "Vidéos",
+    "muscles.origin": "Origine",
+    "muscles.insertion": "Insertion",
+
+    // User
+    "user.profile": "Profil",
+    "user.settings": "Paramètres",
+    "user.logout": "Déconnexion",
+    "user.subscription": "Abonnement",
+    "user.language": "Langue",
+    "user.theme": "Thème",
+    "user.notifications": "Notifications",
+
+    // Actions
+    "actions.save": "Enregistrer",
+    "actions.cancel": "Annuler",
+    "actions.delete": "Supprimer",
+    "actions.edit": "Modifier",
+    "actions.add": "Ajouter",
+    "actions.search": "Rechercher",
+    "actions.filter": "Filtrer",
+    "actions.sort": "Trier",
+    "actions.download": "Télécharger",
+    "actions.share": "Partager",
+    "actions.close": "Fermer",
+
+    // System
+    "system.status": "État du Système",
+    "system.version": "Version",
+    "system.lastUpdate": "Dernière Mise à Jour",
+    "system.maintenance": "Maintenance",
+    "system.backup": "Sauvegarde",
+    "system.restore": "Restaurer",
+    "system.logs": "Journaux Système",
+  },
+
+  ru: {
+    // General
+    "app.title": "Исследователь Анатомии",
+    "app.subtitle": "Интерактивный 3D-исследователь анатомии человека",
+    "app.loading": "Загрузка...",
+    "app.error": "Произошла ошибка",
+    "app.success": "Успех",
+
+    // Navigation
+    "nav.home": "Главная",
+    "nav.learn": "Обучение",
+    "nav.videos": "Видео",
+    "nav.account": "Аккаунт",
+    "nav.settings": "Настройки",
+    "nav.logout": "Выйти",
+    "nav.admin": "Панель Администратора",
+    "nav.profile": "Профиль",
+
+    // Auth
+    "auth.login": "Вход",
+    "auth.signup": "Регистрация",
+    "auth.email": "Эл. почта",
+    "auth.password": "Пароль",
+    "auth.forgotPassword": "Забыли пароль?",
+    "auth.name": "Имя",
+    "auth.confirmPassword": "Подтвердите пароль",
+    "auth.createAccount": "Создать аккаунт",
+    "auth.alreadyHaveAccount": "Уже есть аккаунт?",
+    "auth.dontHaveAccount": "Нет аккаунта?",
+    "auth.loginWithGoogle": "Войти через Google",
+    "auth.loginWithFacebook": "Войти через Facebook",
+
+    // Subscription
+    "subscription.title": "Планы Подписки",
+    "subscription.basic": "Базовый",
+    "subscription.premium": "Премиум",
+    "subscription.professional": "Профессиональный",
+    "subscription.current": "Текущий План",
+    "subscription.upgrade": "Улучшить Сейчас",
+    "subscription.manage": "Управление Подпиской",
+    "subscription.cancel": "Отменить Подписку",
+
+    // Settings
+    "settings.title": "Настройки",
+    "settings.language": "Язык",
+    "settings.theme": "Тема",
+    "settings.notifications": "Уведомления",
+    "settings.save": "Сохранить Изменения",
+    "settings.account": "Аккаунт",
+    "settings.privacy": "Конфиденциальность",
+    "settings.appearance": "Внешний вид",
+    "settings.accessibility": "Доступность",
+    "settings.database": "База данных",
+    "settings.api": "API",
+
+    // Theme
+    "theme.light": "Светлая",
+    "theme.dark": "Темная",
+    "theme.system": "Системная",
+
+    // Database
+    "database.title": "Настройки Базы Данных",
+    "database.connection": "Подключение",
+    "database.prisma": "Конфигурация Prisma",
+    "database.supabase": "Конфигурация Supabase",
+    "database.url": "URL Базы Данных",
+    "database.apiKey": "API Ключ",
+    "database.test": "Проверить Соединение",
+
+    // Admin
+    "admin.title": "Панель Администратора",
+    "admin.users": "Пользователи",
+    "admin.content": "Контент",
+    "admin.videos": "Видео",
+    "admin.settings": "Настройки",
+    "admin.stats": "Статистика",
+    "admin.addVideo": "Добавить Видео",
+    "admin.editVideo": "Редактировать Видео",
+    "admin.deleteVideo": "Удалить Видео",
+    "admin.videoTitle": "Название Видео",
+    "admin.videoDescription": "Описание Видео",
+    "admin.videoUrl": "URL Видео",
+    "admin.videoThumbnail": "Миниатюра Видео",
+    "admin.videoDuration": "Продолжительность Видео",
+    "admin.videoPremium": "Премиум Контент",
+    "admin.videoMuscle": "Связанная Мышца",
+
+    // Muscles
+    "muscles.title": "Группы Мышц",
+    "muscles.select": "Выберите мышцу",
+    "muscles.overview": "Обзор",
+    "muscles.function": "Функция",
+    "muscles.conditions": "Состояния",
+    "muscles.videos": "Видео",
+    "muscles.origin": "Начало",
+    "muscles.insertion": "Прикрепление",
+
+    // User
+    "user.profile": "Профиль",
+    "user.settings": "Настройки",
+    "user.logout": "Выйти",
+    "user.subscription": "Подписка",
+    "user.language": "Язык",
+    "user.theme": "Тема",
+    "user.notifications": "Уведомления",
+
+    // Actions
+    "actions.save": "Сохранить",
+    "actions.cancel": "Отмена",
+    "actions.delete": "Удалить",
+    "actions.edit": "Редактировать",
+    "actions.add": "Добавить",
+    "actions.search": "Поиск",
+    "actions.filter": "Фильтр",
+    "actions.sort": "Сортировка",
+    "actions.download": "Скачать",
+    "actions.share": "Поделиться",
+    "actions.close": "Закрыть",
+
+    // System
+    "system.status": "Статус Системы",
+    "system.version": "Версия",
+    "system.lastUpdate": "Последнее Обновление",
+    "system.maintenance": "Обслуживание",
+    "system.backup": "Резервное Копирование",
+    "system.restore": "Восстановление",
+    "system.logs": "Системные Журналы",
+  },
+}
+
+// Create the provider component
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const [currentLanguage, setCurrentLanguage] = useState<string>("en")
+
+  // Initialize language from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedLanguage = localStorage.getItem("language")
+      if (savedLanguage && ["en", "fr", "ru"].includes(savedLanguage)) {
+        setCurrentLanguage(savedLanguage)
+      }
+    }
+  }, [])
+
+  // Translation function
+  const t = (key: string, params?: Record<string, string>): string => {
+    // Get the translation for the current language
+    const translation = translations[currentLanguage]?.[key] || translations.en[key] || key
+
+    // Replace parameters if provided
+    if (params) {
+      return Object.entries(params).reduce((acc, [key, value]) => {
+        return acc.replace(`{{${key}}}`, value)
+      }, translation)
+    }
+
+    return translation
+  }
+
+  // Change language function
+  const changeLanguage = (lang: string) => {
+    if (translations[lang]) {
+      setCurrentLanguage(lang)
+      // Update HTML lang attribute
+      document.documentElement.lang = lang
+      // Store in localStorage for persistence
+      if (typeof window !== "undefined") {
+        localStorage.setItem("language", lang)
+      }
+    }
+  }
+
+  return <I18nContext.Provider value={{ t, changeLanguage, currentLanguage }}>{children}</I18nContext.Provider>
+}
+
+// Custom hook to use the i18n context
+export function useI18n() {
+  const context = useContext(I18nContext)
+  if (context === undefined) {
+    throw new Error("useI18n must be used within an I18nProvider")
+  }
+  return context
+}
+

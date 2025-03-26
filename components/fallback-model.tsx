@@ -33,7 +33,7 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
 
           {/* Clickable muscle regions */}
           <g>
-            {/* Deltoids (shoulders) */}
+            {/* Deltoids (shoulders) - #3 */}
             <path
               d="M70,70 C60,60 60,80 70,90 M130,70 C140,60 140,80 130,90"
               fill="none"
@@ -45,8 +45,14 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("deltoids")}
               style={{ cursor: "pointer" }}
             />
+            <text x="50" y="75" fill="white" fontSize="10" fontWeight="bold">
+              3
+            </text>
+            <text x="145" y="75" fill="white" fontSize="10" fontWeight="bold">
+              3
+            </text>
 
-            {/* Pectoralis (chest) */}
+            {/* Pectoralis (chest) - #4 */}
             <path
               d="M85,100 C90,110 110,110 115,100"
               fill="none"
@@ -58,8 +64,11 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("pectoralis")}
               style={{ cursor: "pointer" }}
             />
+            <text x="100" y="105" fill="white" fontSize="10" fontWeight="bold">
+              4
+            </text>
 
-            {/* Biceps */}
+            {/* Biceps - #1 */}
             <path
               d="M60,110 C55,130 65,150 70,160 M140,110 C145,130 135,150 130,160"
               fill="none"
@@ -71,8 +80,14 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("biceps")}
               style={{ cursor: "pointer" }}
             />
+            <text x="50" y="135" fill="white" fontSize="10" fontWeight="bold">
+              1
+            </text>
+            <text x="145" y="135" fill="white" fontSize="10" fontWeight="bold">
+              1
+            </text>
 
-            {/* Triceps */}
+            {/* Triceps - #2 */}
             <path
               d="M65,120 C60,140 70,150 75,155 M135,120 C140,140 130,150 125,155"
               fill="none"
@@ -84,8 +99,14 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("triceps")}
               style={{ cursor: "pointer" }}
             />
+            <text x="75" y="140" fill="white" fontSize="10" fontWeight="bold">
+              2
+            </text>
+            <text x="120" y="140" fill="white" fontSize="10" fontWeight="bold">
+              2
+            </text>
 
-            {/* Abdominals */}
+            {/* Abdominals - #10 */}
             <path
               d="M90,130 C100,135 100,135 110,130 M90,150 C100,155 100,155 110,150 M90,170 C100,175 100,175 110,170"
               fill="none"
@@ -97,8 +118,11 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("abdominals")}
               style={{ cursor: "pointer" }}
             />
+            <text x="100" y="150" fill="white" fontSize="10" fontWeight="bold">
+              10
+            </text>
 
-            {/* Latissimus */}
+            {/* Latissimus - #9 */}
             <path
               d="M75,120 C80,150 85,170 90,180 M125,120 C120,150 115,170 110,180"
               fill="none"
@@ -110,8 +134,14 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("latissimus")}
               style={{ cursor: "pointer" }}
             />
+            <text x="75" y="150" fill="white" fontSize="10" fontWeight="bold">
+              9
+            </text>
+            <text x="120" y="150" fill="white" fontSize="10" fontWeight="bold">
+              9
+            </text>
 
-            {/* Quadriceps */}
+            {/* Quadriceps - #5 */}
             <path
               d="M85,200 C85,230 90,260 90,280 M115,200 C115,230 110,260 110,280"
               fill="none"
@@ -123,8 +153,14 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("quadriceps")}
               style={{ cursor: "pointer" }}
             />
+            <text x="80" y="240" fill="white" fontSize="10" fontWeight="bold">
+              5
+            </text>
+            <text x="115" y="240" fill="white" fontSize="10" fontWeight="bold">
+              5
+            </text>
 
-            {/* Hamstrings */}
+            {/* Hamstrings - #6 */}
             <path
               d="M80,220 C80,250 85,270 85,290 M120,220 C120,250 115,270 115,290"
               fill="none"
@@ -136,8 +172,14 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("hamstrings")}
               style={{ cursor: "pointer" }}
             />
+            <text x="70" y="255" fill="white" fontSize="10" fontWeight="bold">
+              6
+            </text>
+            <text x="125" y="255" fill="white" fontSize="10" fontWeight="bold">
+              6
+            </text>
 
-            {/* Gastrocnemius (calves) */}
+            {/* Gastrocnemius (calves) - #7 */}
             <path
               d="M85,300 C85,320 90,340 90,350 M115,300 C115,320 110,340 110,350"
               fill="none"
@@ -149,8 +191,14 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("gastrocnemius")}
               style={{ cursor: "pointer" }}
             />
+            <text x="80" y="325" fill="white" fontSize="10" fontWeight="bold">
+              7
+            </text>
+            <text x="115" y="325" fill="white" fontSize="10" fontWeight="bold">
+              7
+            </text>
 
-            {/* Trapezius */}
+            {/* Trapezius - #8 */}
             <path
               d="M85,70 C90,80 100,85 110,80 C115,70"
               fill="none"
@@ -162,13 +210,16 @@ export default function FallbackModel({ onMuscleSelect }: FallbackModelProps) {
               onClick={() => onMuscleSelect("trapezius")}
               style={{ cursor: "pointer" }}
             />
+            <text x="100" y="75" fill="white" fontSize="10" fontWeight="bold">
+              8
+            </text>
           </g>
         </svg>
 
         {/* Hover tooltip */}
         {hoveredMuscle && (
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-12 bg-primary text-white px-3 py-1 rounded-md text-sm font-medium">
-            {muscleData[hoveredMuscle]?.name || hoveredMuscle}
+            {muscleData[hoveredMuscle]?.name || hoveredMuscle} (#{muscleData[hoveredMuscle]?.number})
           </div>
         )}
       </div>

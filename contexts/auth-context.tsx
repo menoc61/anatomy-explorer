@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import type { User, Subscription } from "@/types"
 import { useRouter } from "next/navigation"
 
@@ -10,50 +10,52 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>
   logout: () => void
   updateSubscription: (subscription: Subscription) => void
+  updateUser: (updatedUser: User) => void
   isAdmin: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
-  const isAdmin = user?.role === "admin"
+  const [isAdmin, setIsAdmin] = useState(false)
 
   // Check for existing session on mount
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user")
-
-      if (storedUser) {
-        const parsedUser: User = JSON.parse(storedUser)
-
-        // Ensure parsedUser is a valid object with expected properties
-        if (parsedUser && typeof parsedUser === "object" && "email" in parsedUser) {
+    // Simulate loading
+    const timer = setTimeout(() => {
+      try {
+        // Check localStorage for saved user
+        const savedUser = localStorage.getItem("user")
+        if (savedUser) {
+          const parsedUser = JSON.parse(savedUser)
           setUser(parsedUser)
-        } else {
-          throw new Error("Invalid user data")
+          setIsAdmin(parsedUser.role === "admin")
         }
+      } catch (error) {
+        console.error("Error loading user:", error)
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.error("Error parsing user data from localStorage:", error)
-      localStorage.removeItem("user") // Clear corrupted data
-      setUser(null)
-    } finally {
-      setIsLoading(false)
-    }
+    }, 500) // Simulate a short loading time
+
+    return () => clearTimeout(timer)
   }, [])
 
-  // Login function
+  // Login function - simplified for prototype
   const login = async (email: string, password: string) => {
     setIsLoading(true)
 
-    try {
-      if (email && password.length >= 6) {
-        await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API delay
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 800))
 
-        const isAdminUser = email.toLowerCase().includes("admin")
+    try {
+      // For prototype, accept any email/password with minimal validation
+      if (email && password.length >= 3) {
+        // Special case for admin
+        const isAdminUser = email === "admin@admin.com" || email.toLowerCase().includes("admin")
 
         const newUser: User = {
           id: `user-${Date.now()}`,
@@ -72,12 +74,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           updatedAt: new Date().toISOString(),
         }
 
-        localStorage.setItem("user", JSON.stringify(newUser))
+        // Save to state and localStorage
         setUser(newUser)
-
-        if (isAdminUser) {
-          router.push("/admin")
-        }
+        setIsAdmin(isAdminUser)
+        localStorage.setItem("user", JSON.stringify(newUser))
 
         return true
       }
@@ -91,22 +91,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = () => {
-    localStorage.removeItem("user")
     setUser(null)
+    setIsAdmin(false)
+    localStorage.removeItem("user")
     router.push("/login")
   }
 
   const updateSubscription = (subscription: Subscription) => {
     if (!user) return
 
-    const updatedUser = { ...user, subscription }
+    const updatedUser = {
+      ...user,
+      subscription,
+    }
 
-    localStorage.setItem("user", JSON.stringify(updatedUser))
     setUser(updatedUser)
+    localStorage.setItem("user", JSON.stringify(updatedUser))
+  }
+
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser)
+    setIsAdmin(updatedUser.role === "admin")
+    localStorage.setItem("user", JSON.stringify(updatedUser))
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, updateSubscription, isAdmin }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        login,
+        logout,
+        updateSubscription,
+        updateUser,
+        isAdmin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
@@ -119,3 +139,4 @@ export function useAuth() {
   }
   return context
 }
+

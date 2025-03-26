@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,9 +22,21 @@ export default function SignupPage() {
   const router = useRouter()
 
   // If user is already logged in, redirect to home
+  useEffect(() => {
+    if (user) {
+      router.push("/")
+    }
+  }, [user, router])
+
   if (user) {
-    router.push("/")
-    return null
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <p>Redirecting...</p>
+        </div>
+      </div>
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,7 +71,9 @@ export default function SignupPage() {
     // For demo purposes, we'll just use the login function
     // In a real app, you would have a separate signup API call
     const success = await login(email, password)
-    if (!success) {
+    if (success) {
+      router.push("/")
+    } else {
       setError("Failed to create account. Please try again.")
     }
   }

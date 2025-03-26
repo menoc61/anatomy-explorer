@@ -3,8 +3,8 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/hooks/use-auth"
-import { useLanguage } from "@/hooks/use-language"
+import { useAuth } from "@/contexts/auth-context"
+import { useLanguage } from "@/contexts/language-context"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import {
@@ -175,33 +175,42 @@ export function MainNav() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/account/profile" className="cursor-pointer">
+                  <Link href="/account/profile" className="cursor-pointer flex items-center">
                     <User className="h-4 w-4 mr-2" />
                     Edit Profile
                   </Link>
                 </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      Admin Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuItem asChild>
-                  <Link href="/account/subscription" className="cursor-pointer">
+                  <Link href="/account/subscription" className="cursor-pointer flex items-center">
                     <Crown className="h-4 w-4 mr-2" />
                     {t("subscription.title")}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/account/settings" className="cursor-pointer">
+                  <Link href="/account/settings" className="cursor-pointer flex items-center">
                     <Settings className="h-4 w-4 mr-2" />
                     {t("nav.settings")}
                   </Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer flex items-center">
+                        <BarChart3 className="h-4 w-4 mr-2" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/settings" className="cursor-pointer flex items-center">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Admin Settings
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                <DropdownMenuItem onClick={logout} className="cursor-pointer flex items-center">
                   <LogOut className="h-4 w-4 mr-2" />
                   {t("nav.logout")}
                 </DropdownMenuItem>

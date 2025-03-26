@@ -1,6 +1,7 @@
 import type React from "react"
 import { SiteHeader } from "@/components/layout/site-header"
 import AuthGuard from "@/components/auth-guard"
+import UserWidget from "@/components/user-widget"
 
 export default function MainLayout({
   children,
@@ -12,6 +13,7 @@ export default function MainLayout({
       <div className="relative flex min-h-screen flex-col">
         <SiteHeader />
         <div className="flex-1">{children}</div>
+        <UserWidget />
       </div>
     </AuthGuard>
   )

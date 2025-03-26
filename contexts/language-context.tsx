@@ -182,6 +182,101 @@ const translations: Translations = {
     fr: "Système",
     ru: "Системная",
   },
+  "user.profile": {
+    en: "Profile",
+    fr: "Profil",
+    ru: "Профиль",
+  },
+  "user.settings": {
+    en: "Settings",
+    fr: "Paramètres",
+    ru: "Настройки",
+  },
+  "user.logout": {
+    en: "Logout",
+    fr: "Déconnexion",
+    ru: "Выйти",
+  },
+  "user.subscription": {
+    en: "Subscription",
+    fr: "Abonnement",
+    ru: "Подписка",
+  },
+  "user.language": {
+    en: "Language",
+    fr: "Langue",
+    ru: "Язык",
+  },
+  "user.theme": {
+    en: "Theme",
+    fr: "Thème",
+    ru: "Тема",
+  },
+  "actions.share": {
+    en: "Share",
+    fr: "Partager",
+    ru: "Поделиться",
+  },
+  "muscles.overview": {
+    en: "Overview",
+    fr: "Aperçu",
+    ru: "Обзор",
+  },
+  "muscles.function": {
+    en: "Function",
+    fr: "Fonction",
+    ru: "Функция",
+  },
+  "muscles.conditions": {
+    en: "Conditions",
+    fr: "Conditions",
+    ru: "Состояния",
+  },
+  "muscles.videos": {
+    en: "Videos",
+    fr: "Vidéos",
+    ru: "Видео",
+  },
+  "muscles.origin": {
+    en: "Origin",
+    fr: "Origine",
+    ru: "Начало",
+  },
+  "muscles.insertion": {
+    en: "Insertion",
+    fr: "Insertion",
+    ru: "Прикрепление",
+  },
+  "muscles.title": {
+    en: "Muscle Groups",
+    fr: "Groupes Musculaires",
+    ru: "Группы Мышц",
+  },
+  "muscles.select": {
+    en: "Select a muscle",
+    fr: "Sélectionnez un muscle",
+    ru: "Выберите мышцу",
+  },
+  "help.title": {
+    en: "Help & Support",
+    fr: "Aide & Support",
+    ru: "Помощь и Поддержка",
+  },
+  "help.faq": {
+    en: "Frequently Asked Questions",
+    fr: "Questions Fréquemment Posées",
+    ru: "Часто Задаваемые Вопросы",
+  },
+  "help.contact": {
+    en: "Contact Us",
+    fr: "Contactez-nous",
+    ru: "Связаться с нами",
+  },
+  "help.about": {
+    en: "About",
+    fr: "À propos",
+    ru: "О нас",
+  },
 }
 
 interface LanguageContextType {
@@ -193,26 +288,33 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>("en")
+export function LanguageProvider({
+  children,
+  defaultLanguage = "en",
+}: {
+  children: ReactNode
+  defaultLanguage?: string
+}) {
+  const [language, setLanguage] = useState<Language>((defaultLanguage as Language) || "en")
 
   // Initialize language from localStorage or browser settings
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language") as Language
-    if (savedLanguage && ["en", "fr", "ru"].includes(savedLanguage)) {
-      setLanguage(savedLanguage)
-    } else {
-      // Try to detect browser language
-      const browserLang = navigator.language.split("-")[0]
-      if (browserLang === "fr") setLanguage("fr")
-      else if (browserLang === "ru") setLanguage("ru")
-      // Default to English for other languages
+    // Only run in browser environment
+    if (typeof window !== "undefined") {
+      const savedLanguage = localStorage.getItem("language") as Language
+      if (savedLanguage && ["en", "fr", "ru"].includes(savedLanguage)) {
+        setLanguage(savedLanguage)
+      } else if (defaultLanguage && ["en", "fr", "ru"].includes(defaultLanguage)) {
+        setLanguage(defaultLanguage as Language)
+      }
     }
-  }, [])
+  }, [defaultLanguage])
 
   // Save language preference to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem("language", language)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("language", language)
+    }
   }, [language])
 
   // Translation function

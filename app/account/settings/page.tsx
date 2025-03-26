@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { useLanguage } from "@/contexts/language-context"
 import { useTheme } from "next-themes"
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Loader2, Save } from "lucide-react"
+import { Loader2, Save, Bell, Eye, Shield, Smartphone, Palette } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function SettingsPage() {
@@ -45,6 +45,15 @@ export default function SettingsPage() {
     defaultView: "3d",
   })
 
+  // Detect system language on first load
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("language")) {
+      const browserLang = navigator.language.split("-")[0]
+      if (browserLang === "fr") setLanguage("fr" as any)
+      else if (browserLang === "ru") setLanguage("ru" as any)
+    }
+  }, [setLanguage])
+
   if (!user) return null
 
   const handleSaveSettings = async () => {
@@ -54,7 +63,7 @@ export default function SettingsPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     toast({
-      title: "Settings saved",
+      title: t("app.success"),
       description: "Your preferences have been updated successfully.",
       duration: 3000,
     })
@@ -76,7 +85,7 @@ export default function SettingsPage() {
           <TabsTrigger value="accessibility">Accessibility</TabsTrigger>
           <TabsTrigger value="privacy">Privacy</TabsTrigger>
           <TabsTrigger value="display">Display</TabsTrigger>
-          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="mobile">Mobile</TabsTrigger>
         </TabsList>
 
         <TabsContent value="preferences" className="space-y-6">
@@ -128,8 +137,13 @@ export default function SettingsPage() {
         <TabsContent value="notifications" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t("settings.notifications")}</CardTitle>
-              <CardDescription>Configure how you want to receive notifications</CardDescription>
+              <div className="flex items-center gap-2">
+                <Bell className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <CardTitle>{t("settings.notifications")}</CardTitle>
+                  <CardDescription>Configure how you want to receive notifications</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
@@ -198,8 +212,13 @@ export default function SettingsPage() {
         <TabsContent value="accessibility" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Accessibility Settings</CardTitle>
-              <CardDescription>Customize your experience to make the platform more accessible</CardDescription>
+              <div className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <CardTitle>Accessibility Settings</CardTitle>
+                  <CardDescription>Customize your experience to make the platform more accessible</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
@@ -243,8 +262,13 @@ export default function SettingsPage() {
         <TabsContent value="privacy" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Privacy Settings</CardTitle>
-              <CardDescription>Control your data and privacy preferences</CardDescription>
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <CardTitle>Privacy Settings</CardTitle>
+                  <CardDescription>Control your data and privacy preferences</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4">
@@ -289,8 +313,13 @@ export default function SettingsPage() {
         <TabsContent value="display" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Display Settings</CardTitle>
-              <CardDescription>Customize how content is displayed</CardDescription>
+              <div className="flex items-center gap-2">
+                <Palette className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <CardTitle>Display Settings</CardTitle>
+                  <CardDescription>Customize how content is displayed</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4">
@@ -333,42 +362,40 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="account" className="space-y-6">
+        <TabsContent value="mobile" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription>View and update your account details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-2">
-                <Label>Name</Label>
-                <div className="rounded-md border px-4 py-2">{user.name}</div>
-              </div>
-              <div className="grid gap-2">
-                <Label>Email</Label>
-                <div className="rounded-md border px-4 py-2">{user.email}</div>
-              </div>
-              <div className="grid gap-2">
-                <Label>Account Type</Label>
-                <div className="rounded-md border px-4 py-2">
-                  {user.role === "admin" ? "Administrator" : "Standard User"}
+              <div className="flex items-center gap-2">
+                <Smartphone className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <CardTitle>Mobile Settings</CardTitle>
+                  <CardDescription>Configure your mobile experience</CardDescription>
                 </div>
               </div>
-              <div className="grid gap-2">
-                <Label>Member Since</Label>
-                <div className="rounded-md border px-4 py-2">{new Date(user.createdAt).toLocaleDateString()}</div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="download-cellular">Download over cellular</Label>
+                  <p className="text-sm text-muted-foreground">Allow downloading content using cellular data</p>
+                </div>
+                <Switch id="download-cellular" checked={false} onCheckedChange={() => {}} />
               </div>
 
-              <div className="pt-4 space-y-2">
-                <Button variant="outline" className="w-full">
-                  Change Password
-                </Button>
-                <Button variant="outline" className="w-full">
-                  Export My Data
-                </Button>
-                <Button variant="destructive" className="w-full">
-                  Delete Account
-                </Button>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="auto-download">Auto-download updates</Label>
+                  <p className="text-sm text-muted-foreground">Automatically download app updates when available</p>
+                </div>
+                <Switch id="auto-download" checked={true} onCheckedChange={() => {}} />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="data-saver">Data saver mode</Label>
+                  <p className="text-sm text-muted-foreground">Reduce data usage by loading lower quality images</p>
+                </div>
+                <Switch id="data-saver" checked={false} onCheckedChange={() => {}} />
               </div>
             </CardContent>
           </Card>

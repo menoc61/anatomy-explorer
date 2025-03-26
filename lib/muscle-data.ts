@@ -13,6 +13,7 @@ export interface MuscleData {
   functions: string[]
   movements: string[]
   conditions: MuscleCondition[]
+  number: number // Added muscle number
 }
 
 export const muscleData: Record<string, MuscleData> = {
@@ -37,6 +38,7 @@ export const muscleData: Record<string, MuscleData> = {
           "Partial or complete tear of the biceps tendon, often resulting in a visible bulge in the upper arm.",
       },
     ],
+    number: 1, // Muscle #1
   },
   triceps: {
     name: "Triceps Brachii",
@@ -66,6 +68,7 @@ export const muscleData: Record<string, MuscleData> = {
         description: "Partial or complete tear of the triceps tendon, often at the insertion point on the olecranon.",
       },
     ],
+    number: 2, // Muscle #2
   },
   deltoids: {
     name: "Deltoid Muscle",
@@ -98,6 +101,7 @@ export const muscleData: Record<string, MuscleData> = {
           "Compression of the rotator cuff tendons and bursa under the acromion, often affecting deltoid function.",
       },
     ],
+    number: 3, // Muscle #3
   },
   pectoralis: {
     name: "Pectoralis Major",
@@ -126,6 +130,7 @@ export const muscleData: Record<string, MuscleData> = {
         description: "Overstretching or minor tearing of the pectoral muscle fibers, causing pain and weakness.",
       },
     ],
+    number: 4, // Muscle #4
   },
   quadriceps: {
     name: "Quadriceps Femoris",
@@ -154,6 +159,7 @@ export const muscleData: Record<string, MuscleData> = {
         description: "Pain around the patella, often related to imbalances or weakness in the quadriceps muscles.",
       },
     ],
+    number: 5, // Muscle #5
   },
   hamstrings: {
     name: "Hamstrings",
@@ -182,6 +188,7 @@ export const muscleData: Record<string, MuscleData> = {
         description: "Degeneration of the hamstring tendons, often from chronic overuse.",
       },
     ],
+    number: 6, // Muscle #6
   },
   gastrocnemius: {
     name: "Gastrocnemius",
@@ -209,6 +216,7 @@ export const muscleData: Record<string, MuscleData> = {
         description: "Partial tear at the medial head of the gastrocnemius, causing sudden pain in the calf.",
       },
     ],
+    number: 7, // Muscle #7
   },
   trapezius: {
     name: "Trapezius",
@@ -242,6 +250,7 @@ export const muscleData: Record<string, MuscleData> = {
           "Chronic pain in the trapezius muscle, common in people who work at computers or perform repetitive upper body movements.",
       },
     ],
+    number: 8, // Muscle #8
   },
   latissimus: {
     name: "Latissimus Dorsi",
@@ -275,6 +284,7 @@ export const muscleData: Record<string, MuscleData> = {
         description: "Degeneration of the latissimus dorsi tendon, often from repetitive overhead activities.",
       },
     ],
+    number: 9, // Muscle #9
   },
   abdominals: {
     name: "Abdominal Muscles",
@@ -316,6 +326,7 @@ export const muscleData: Record<string, MuscleData> = {
         description: "Protrusion of internal organs through a weakness in the abdominal wall.",
       },
     ],
+    number: 10, // Muscle #10
   },
 }
 

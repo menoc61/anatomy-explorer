@@ -7,14 +7,17 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { Loader2, CheckCircle2, Crown } from "lucide-react"
+import { Loader2, CheckCircle2, Crown, CreditCard, Calendar, AlertCircle } from "lucide-react"
 import type { Subscription } from "@/types"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SubscriptionPage() {
   const { user, updateSubscription } = useAuth()
   const { t } = useLanguage()
+  const { toast } = useToast()
   const [selectedPlan, setSelectedPlan] = useState<"basic" | "premium" | "professional">("premium")
   const [isProcessing, setIsProcessing] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "paypal">("card")
 
   if (!user) return null
 
@@ -63,21 +66,37 @@ export default function SubscriptionPage() {
   const handleUpgrade = async () => {
     setIsProcessing(true)
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      // Simulate payment processing
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // Update subscription
-    const newSubscription: Subscription = {
-      id: `sub-${Date.now()}`,
-      status: "active",
-      plan: selectedPlan,
-      startDate: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year from now
-      autoRenew: true,
+      // Update subscription
+      const newSubscription: Subscription = {
+        id: `sub-${Date.now()}`,
+        status: "active",
+        plan: selectedPlan,
+        startDate: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year from now
+        autoRenew: true,
+      }
+
+      updateSubscription(newSubscription)
+
+      toast({
+        title: "Subscription upgraded",
+        description: `You have successfully upgraded to the ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan.`,
+        duration: 5000,
+      })
+    } catch (error) {
+      toast({
+        title: "Upgrade failed",
+        description: "There was an error processing your payment. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      })
+    } finally {
+      setIsProcessing(false)
     }
-
-    updateSubscription(newSubscription)
-    setIsProcessing(false)
   }
 
   return (
@@ -89,18 +108,39 @@ export default function SubscriptionPage() {
 
       {isActive && (
         <Card className="mb-8 border-primary/50 bg-primary/5">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="flex items-center">
               <Crown className="h-5 w-5 mr-2 text-amber-500" />
               {t("subscription.current")}
             </CardTitle>
-            <CardDescription>
-              You are currently on the {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} plan
-            </CardDescription>
+            <Button variant="outline" size="sm">
+              Manage Billing
+            </Button>
           </CardHeader>
           <CardContent>
-            <div className="text-sm">
-              <p>Your subscription will renew on {new Date(user.subscription?.expiresAt || "").toLocaleDateString()}</p>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-medium">{currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} Plan</p>
+                  <p className="text-sm text-muted-foreground">
+                    Next billing date: {new Date(user.subscription?.expiresAt || "").toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">
+                    {currentPlan === "basic" ? "$9.99" : currentPlan === "premium" ? "$19.99" : "$29.99"}
+                    <span className="text-sm text-muted-foreground">/month</span>
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {user.subscription?.autoRenew ? "Auto-renews" : "Does not auto-renew"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span>Started on {new Date(user.subscription?.startDate || "").toLocaleDateString()}</span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -144,18 +184,67 @@ export default function SubscriptionPage() {
       </div>
 
       {(!isActive || currentPlan !== selectedPlan) && (
-        <div className="mt-8 flex justify-center">
-          <Button size="lg" onClick={handleUpgrade} disabled={isProcessing}>
-            {isProcessing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              t("subscription.upgrade")
-            )}
-          </Button>
-        </div>
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Payment Method</CardTitle>
+            <CardDescription>Select your preferred payment method</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup value={paymentMethod} onValueChange={(value: any) => setPaymentMethod(value)}>
+              <div className="grid gap-4">
+                <div className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value="card" id="payment-card" />
+                  <Label htmlFor="payment-card" className="flex items-center gap-2 cursor-pointer">
+                    <CreditCard className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">Credit or Debit Card</p>
+                      <p className="text-sm text-muted-foreground">Pay with Visa, Mastercard, or other cards</p>
+                    </div>
+                  </Label>
+                </div>
+
+                <div className="flex items-center space-x-2 border rounded-lg p-4">
+                  <RadioGroupItem value="paypal" id="payment-paypal" />
+                  <Label htmlFor="payment-paypal" className="flex items-center gap-2 cursor-pointer">
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M19.5 8.25V16.5C19.5 17.3284 18.8284 18 18 18H6C5.17157 18 4.5 17.3284 4.5 16.5V8.25M19.5 8.25C19.5 7.42157 18.8284 6.75 18 6.75H6C5.17157 6.75 4.5 7.42157 4.5 8.25M19.5 8.25V9.75C19.5 10.5784 18.8284 11.25 18 11.25H6C5.17157 11.25 4.5 10.5784 4.5 9.75V8.25"
+                        stroke="#64748b"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <div>
+                      <p className="font-medium">PayPal</p>
+                      <p className="text-sm text-muted-foreground">Pay with your PayPal account</p>
+                    </div>
+                  </Label>
+                </div>
+              </div>
+            </RadioGroup>
+
+            <div className="mt-6 flex items-center gap-2 p-4 bg-amber-50 text-amber-800 rounded-lg">
+              <AlertCircle className="h-5 w-5 flex-shrink-0" />
+              <p className="text-sm">
+                For demo purposes, no actual payment will be processed. Click "Upgrade Now" to simulate a successful
+                payment.
+              </p>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button size="lg" onClick={handleUpgrade} disabled={isProcessing}>
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                t("subscription.upgrade")
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
       )}
     </div>
   )

@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
 import { useLanguage } from "@/contexts/language-context"
 import { useToast } from "@/hooks/use-toast"
+import { useEnvironmentStore } from "@/lib/store"
 
 interface VideoPlayerProps {
   src: string
@@ -29,6 +30,19 @@ export default function VideoPlayer({ src, title, poster, className, allowDownlo
   const { t } = useLanguage()
   const { toast } = useToast()
 
+  const { getApiConfig, isApiConfigured } = useEnvironmentStore()
+  const analyticsConfig = getApiConfig("googleAnalytics")
+
+  // Add a function to track video events if analytics is configured
+  const trackVideoEvent = (action: string) => {
+    if (isApiConfigured("googleAnalytics") && typeof window !== "undefined" && (window as any).gtag) {
+      ;(window as any).gtag("event", action, {
+        event_category: "video",
+        event_label: title || src,
+      })
+    }
+  }
+
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
@@ -43,6 +57,19 @@ export default function VideoPlayer({ src, title, poster, className, allowDownlo
     }
     const onFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement)
+    }
+
+    // Auto-play if poster is not provided (assumes this is a user-initiated view)
+    if (!poster && !isPlaying) {
+      // Use a timeout to ensure browser allows play after user interaction
+      const autoPlayTimeout = setTimeout(() => {
+        try {
+          video.play().catch((err) => console.log("Autoplay prevented by browser:", err))
+        } catch (err) {
+          console.log("Autoplay error:", err)
+        }
+      }, 500)
+      return () => clearTimeout(autoPlayTimeout)
     }
 
     video.addEventListener("timeupdate", onTimeUpdate)
@@ -60,7 +87,7 @@ export default function VideoPlayer({ src, title, poster, className, allowDownlo
       video.removeEventListener("volumechange", onVolumeChange)
       document.removeEventListener("fullscreenchange", onFullscreenChange)
     }
-  }, [])
+  }, [isPlaying, poster])
 
   const togglePlay = () => {
     const video = videoRef.current
@@ -68,8 +95,10 @@ export default function VideoPlayer({ src, title, poster, className, allowDownlo
 
     if (isPlaying) {
       video.pause()
+      trackVideoEvent("pause")
     } else {
       video.play()
+      trackVideoEvent("play")
     }
   }
 
@@ -98,6 +127,7 @@ export default function VideoPlayer({ src, title, poster, className, allowDownlo
     if (!video) return
 
     video.currentTime = value[0]
+    trackVideoEvent("seek")
   }
 
   const toggleFullscreen = () => {
@@ -122,6 +152,8 @@ export default function VideoPlayer({ src, title, poster, className, allowDownlo
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+
+    trackVideoEvent("download")
 
     toast({
       title: "Download started",

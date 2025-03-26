@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react"
 import { Loader2, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
+import { useEnvironmentStore } from "@/lib/store"
 
 interface SketchfabViewerProps {
-  modelId: string
+  modelId?: string
   onAnnotationSelect?: (annotationId: string) => void
   selectedMuscle?: string | null
   onError?: () => void
@@ -25,6 +26,8 @@ export default function SketchfabViewer({
   const apiRef = useRef<any>(null)
   const { t } = useLanguage()
   const iframeRef = useRef<HTMLIFrameElement | null>(null) // Move iframeRef to the top level
+  const { getApiConfig } = useEnvironmentStore()
+  const sketchfabConfig = getApiConfig("sketchfab")
 
   // Mapping between muscle IDs and annotation indices
   const muscleToAnnotationMap: Record<string, number> = {
@@ -63,9 +66,6 @@ export default function SketchfabViewer({
     let retryCount = 0
     const maxRetries = 3
 
-    // Store iframe reference to avoid recreating it
-    // const iframeRef = useRef<HTMLIFrameElement | null>(null) // Moved to top level
-
     // Create and initialize the iframe only if it doesn't exist
     const initializeViewer = () => {
       if (!containerRef.current) return
@@ -91,8 +91,12 @@ export default function SketchfabViewer({
       iframe.setAttribute("web-share", "true")
       iframe.allowFullscreen = true
 
+      // Use the provided modelId or fall back to the one in the environment config
+      const effectiveModelId =
+        modelId || sketchfabConfig.additionalConfig?.modelId || "31b40fd809b14665b93773936d67c52c"
+
       // Set the source to the Sketchfab embed URL
-      iframe.src = `https://sketchfab.com/models/${modelId}/embed?autospin=0&autostart=1&ui_infos=0&ui_controls=0&ui_stop=0&transparent=1`
+      iframe.src = `https://sketchfab.com/models/${effectiveModelId}/embed?autospin=0&autostart=1&ui_infos=0&ui_controls=0&ui_stop=0&transparent=1`
 
       // Add event listeners
       iframe.addEventListener("load", () => {
@@ -128,7 +132,7 @@ export default function SketchfabViewer({
       isComponentMounted = false
       // We don't remove the iframe on cleanup to prevent reloads
     }
-  }, [modelId, onError])
+  }, [modelId, onError, sketchfabConfig.additionalConfig?.modelId])
 
   // Handle muscle selection
   useEffect(() => {
