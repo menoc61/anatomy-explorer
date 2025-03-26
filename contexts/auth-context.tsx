@@ -23,11 +23,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Check for existing session on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("user")
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    try {
+      const storedUser = localStorage.getItem("user")
+
+      if (storedUser) {
+        const parsedUser: User = JSON.parse(storedUser)
+
+        // Ensure parsedUser is a valid object with expected properties
+        if (parsedUser && typeof parsedUser === "object" && "email" in parsedUser) {
+          setUser(parsedUser)
+        } else {
+          throw new Error("Invalid user data")
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error)
+      localStorage.removeItem("user") // Clear corrupted data
+      setUser(null)
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }, [])
 
   // Login function
@@ -35,14 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
 
     try {
-      // In a real app, you would validate credentials against a backend
-      // This is just a simple demo implementation
       if (email && password.length >= 6) {
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API delay
 
-        // Create a mock user with subscription data
-        // For demo purposes, if email contains "admin", make them an admin
         const isAdminUser = email.toLowerCase().includes("admin")
 
         const newUser: User = {
@@ -62,11 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           updatedAt: new Date().toISOString(),
         }
 
-        // Store user in localStorage (not secure, just for demo)
         localStorage.setItem("user", JSON.stringify(newUser))
         setUser(newUser)
 
-        // Redirect admin users to admin dashboard
         if (isAdminUser) {
           router.push("/admin")
         }
@@ -91,10 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateSubscription = (subscription: Subscription) => {
     if (!user) return
 
-    const updatedUser = {
-      ...user,
-      subscription,
-    }
+    const updatedUser = { ...user, subscription }
 
     localStorage.setItem("user", JSON.stringify(updatedUser))
     setUser(updatedUser)
@@ -114,4 +119,3 @@ export function useAuth() {
   }
   return context
 }
-
