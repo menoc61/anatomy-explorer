@@ -3,14 +3,12 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Info,
   X,
   Maximize2,
   Minimize2,
   Dumbbell,
   Share,
   LogOut,
-  Settings,
   Globe,
   User,
   ChevronUp,
@@ -23,12 +21,13 @@ import {
   Laptop,
   LayoutDashboard,
   Video,
+  CreditCard,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { muscleData } from "@/lib/muscle-data"
-import SketchfabViewer from "@/components/sketchfab-viewer"
+import dynamic from "next/dynamic"
 import FallbackModel from "@/components/fallback-model"
 import VideoSection from "@/components/video-section"
 import SubscriptionBanner from "@/components/subscription-banner"
@@ -55,36 +54,67 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 
+// Dynamically import the SketchfabViewer to reduce initial load time
+const SketchfabViewer = dynamic(() => import("@/components/sketchfab-viewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800">
+      <div className="flex flex-col items-center">
+        <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin mb-4"></div>
+        <p className="text-foreground">Loading 3D Model...</p>
+      </div>
+    </div>
+  ),
+})
+
 export default function AnatomyExplorer() {
   const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [activeTab, setActiveTab] = useState("overview")
-  const [use3DModel, setUse3DModel] = useState(true)
+  const [use3DModel, setUse3DModel] = useState(false)
   const [modelError, setModelError] = useState(false)
+  const [showUserWidget, setShowUserWidget] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const { language, setLanguage, availableLanguages } = useLanguage()
   const { theme, setTheme } = useTheme()
-  const { user, logout, isAdmin } = useAuth()
+  const { user, logout, isAdmin, isSubscribed, isTrialActive, trialDaysRemaining } = useAuth()
   const router = useRouter()
   const { t } = useI18n()
   const [isMobile, setIsMobile] = useState(false)
+  const [isTablet, setIsTablet] = useState(false)
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+    const checkDeviceSize = () => {
+      setIsMobile(window.innerWidth < 640)
+      setIsTablet(window.innerWidth >= 640 && window.innerWidth < 1024)
     }
 
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
+    checkDeviceSize()
+    window.addEventListener("resize", checkDeviceSize)
 
     return () => {
-      window.removeEventListener("resize", checkMobile)
+      window.removeEventListener("resize", checkDeviceSize)
     }
   }, [])
+
+  // Set default model type based on subscription status
+  useEffect(() => {
+    if (isSubscribed || isTrialActive) {
+      setUse3DModel(true)
+    } else {
+      setUse3DModel(false)
+    }
+  }, [isSubscribed, isTrialActive])
 
   const handleMuscleSelect = (muscleId: string) => {
     setSelectedMuscle(muscleId)
     setActiveTab("overview")
+    setShowUserWidget(false) // Hide user widget when a muscle is selected
+  }
+
+  const handleBackToMuscleGroups = () => {
+    setSelectedMuscle(null)
+    setShowUserWidget(true) // Show user widget when returning to muscle groups
   }
 
   const toggleFullscreen = () => {
@@ -104,15 +134,17 @@ export default function AnatomyExplorer() {
   }
 
   const toggleModelType = () => {
+    // Only allow 3D model for subscribed users or users in trial period
+    if (!use3DModel && !isSubscribed && !isTrialActive) {
+      router.push("/account/subscription")
+      return
+    }
+
     setUse3DModel(!use3DModel)
   }
 
   const handleLogout = () => {
     logout()
-  }
-
-  const handleSettings = () => {
-    router.push("/account/settings")
   }
 
   const handleProfile = () => {
@@ -123,16 +155,20 @@ export default function AnatomyExplorer() {
     router.push("/account/subscription")
   }
 
+  const handleHelp = () => {
+    router.push("/help")
+  }
+
   const handleAdmin = () => {
     router.push("/admin")
   }
 
-  const handleDatabaseSettings = () => {
-    router.push("/admin/database")
-  }
-
   const handleVideoManagement = () => {
     router.push("/admin/videos")
+  }
+
+  const handlePredictions = () => {
+    router.push("/predictions")
   }
 
   useEffect(() => {
@@ -151,7 +187,7 @@ export default function AnatomyExplorer() {
       ref={containerRef}
       className="w-full h-screen flex flex-col md:flex-row bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 text-foreground overflow-hidden"
     >
-      {/* 3D Viewer Section */}
+      {/* 3D/2D Viewer Section */}
       <div className="relative w-full h-[50vh] md:h-full md:w-2/3 flex-shrink-0">
         <div className="absolute top-4 right-4 z-10 flex gap-2">
           <Button
@@ -162,24 +198,47 @@ export default function AnatomyExplorer() {
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </Button>
-          {modelError && (
+
+          {/* Only show toggle button if user is subscribed or in trial */}
+          {(isSubscribed || isTrialActive) && (
             <Button
               variant="outline"
               className="bg-background/30 backdrop-blur-sm border-border/20 hover:bg-background/50 text-xs"
               onClick={toggleModelType}
             >
-              {use3DModel ? "Use 2D Model" : "Try 3D Model"}
+              {use3DModel ? "Use 2D Model" : "Use 3D Model"}
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="icon"
-            className="bg-background/30 backdrop-blur-sm border-border/20 hover:bg-background/50"
-            onClick={() => setSelectedMuscle(null)}
-          >
-            <Info className="h-4 w-4" />
-          </Button>
+
+          {/* Show subscription prompt for non-subscribed users */}
+          {!isSubscribed && !isTrialActive && (
+            <Button
+              variant="default"
+              className="bg-primary text-primary-foreground text-xs"
+              onClick={() => router.push("/account/subscription")}
+            >
+              <Crown className="h-3 w-3 mr-1" /> Subscribe for 3D
+            </Button>
+          )}
+
+          {selectedMuscle && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="bg-background/30 backdrop-blur-sm border-border/20 hover:bg-background/50"
+              onClick={handleBackToMuscleGroups}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
+
+        {/* Trial notification for users in trial period */}
+        {isTrialActive && (
+          <div className="absolute top-4 left-4 z-10 bg-yellow-500/80 text-black px-3 py-1 rounded-full text-xs font-medium">
+            Trial: {trialDaysRemaining} days left
+          </div>
+        )}
 
         {use3DModel ? (
           <SketchfabViewer
@@ -187,6 +246,7 @@ export default function AnatomyExplorer() {
             onAnnotationSelect={handleMuscleSelect}
             selectedMuscle={selectedMuscle}
             onError={handleModelError}
+            onLoad={() => {}}
           />
         ) : (
           <FallbackModel onMuscleSelect={handleMuscleSelect} />
@@ -203,7 +263,7 @@ export default function AnatomyExplorer() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               transition={{ duration: 0.3 }}
-              className="p-6 h-full flex flex-col pb-20 md:pb-24" // Add padding to bottom for user widget
+              className="p-6 h-full flex flex-col"
             >
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-3">
@@ -212,7 +272,7 @@ export default function AnatomyExplorer() {
                   </div>
                   <h2 className="text-2xl font-bold">{muscleData[selectedMuscle]?.name || "Selected Muscle"}</h2>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setSelectedMuscle(null)}>
+                <Button variant="ghost" size="icon" onClick={handleBackToMuscleGroups}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>
@@ -362,7 +422,7 @@ export default function AnatomyExplorer() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-6 h-full flex flex-col pb-20 md:pb-24" // Add padding to bottom for user widget
+              className="p-6 h-full flex flex-col pb-20 md:pb-24" // Add padding for user widget
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
@@ -375,14 +435,17 @@ export default function AnatomyExplorer() {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto pr-2 custom-scrollbar">
-                {Object.entries(muscleData).map(([id, muscle]) => (
+                {Object.entries(muscleData).map(([id, muscle], index) => (
                   <motion.div
                     key={id}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="bg-card/50 hover:bg-card/80 rounded-lg p-4 cursor-pointer transition-colors"
+                    className="bg-card/50 hover:bg-card/80 rounded-lg p-4 cursor-pointer transition-colors relative"
                     onClick={() => handleMuscleSelect(id)}
                   >
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center text-primary-foreground text-xs font-bold">
+                      {index + 1}
+                    </div>
                     <h3 className="font-medium">{muscle.name}</h3>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{muscle.shortDescription}</p>
                   </motion.div>
@@ -392,9 +455,9 @@ export default function AnatomyExplorer() {
           )}
         </AnimatePresence>
 
-        {/* User Options Bar at Bottom - Always visible and fixed */}
-        <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border/20 p-3 flex justify-between items-center z-50">
-          {user && (
+        {/* User Options Bar at Bottom - Only visible on muscle groups screen */}
+        {showUserWidget && user && (
+          <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md border-t border-border/20 p-3 flex justify-between items-center z-50">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-10 gap-2 px-2 hover:bg-background/50">
@@ -419,13 +482,13 @@ export default function AnatomyExplorer() {
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onClick={handleSubscription}>
-                  <Crown className="mr-2 h-4 w-4" />
+                  <CreditCard className="mr-2 h-4 w-4" />
                   <span>{t("user.subscription")}</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onClick={handleSettings}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>{t("user.settings")}</span>
+                <DropdownMenuItem onClick={handleHelp}>
+                  <HelpCircle className="mr-2 w-4" />
+                  <span>{t("help.title")}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
@@ -490,9 +553,9 @@ export default function AnatomyExplorer() {
                       <span>{t("admin.videos")}</span>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem onClick={handleDatabaseSettings}>
+                    <DropdownMenuItem onClick={handlePredictions}>
                       <Database className="mr-2 h-4 w-4" />
-                      <span>{t("database.title")}</span>
+                      <span>{t("predictions.title")}</span>
                     </DropdownMenuItem>
                   </>
                 )}
@@ -505,109 +568,111 @@ export default function AnatomyExplorer() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
 
-          <div className="flex items-center gap-2">
-            {isMobile ? (
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="h-10 w-10">
-                    <MoreVertical className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="bottom" className="h-[60vh]">
-                  <div className="grid gap-4 py-4">
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start"
-                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                    >
-                      {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-                      {theme === "dark" ? t("theme.light") : t("theme.dark")}
+            <div className="flex items-center gap-2">
+              {isMobile ? (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="icon" className="h-10 w-10">
+                      <MoreVertical className="h-5 w-5" />
                     </Button>
-
-                    <Button variant="outline" className="w-full justify-start" onClick={handleSettings}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      {t("settings.title")}
-                    </Button>
-
-                    <Button variant="outline" className="w-full justify-start" onClick={() => router.push("/help")}>
-                      <HelpCircle className="mr-2 h-4 w-4" />
-                      Help
-                    </Button>
-
-                    <div className="grid grid-cols-3 gap-2">
-                      {availableLanguages.map((lang) => (
-                        <Button
-                          key={lang.code}
-                          variant={language === lang.code ? "default" : "outline"}
-                          className="w-full"
-                          onClick={() => setLanguage(lang.code)}
-                        >
-                          {lang.code.toUpperCase()}
-                        </Button>
-                      ))}
-                    </div>
-
-                    {user && (
-                      <Button variant="destructive" className="w-full justify-start" onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        {t("user.logout")}
-                      </Button>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
-            ) : (
-              <>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-1">
-                      <Globe className="h-4 w-4" />
-                      <span>{language.toUpperCase()}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {availableLanguages.map((lang) => (
-                      <DropdownMenuItem
-                        key={lang.code}
-                        onClick={() => setLanguage(lang.code)}
-                        className={language === lang.code ? "bg-primary/10" : ""}
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="h-[60vh]">
+                    <div className="grid gap-4 py-4">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                       >
-                        {lang.name}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                        {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                        {theme === "dark" ? t("theme.light") : t("theme.dark")}
+                      </Button>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1"
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                >
-                  {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                </Button>
+                      <Button variant="outline" className="w-full justify-start" onClick={handleHelp}>
+                        <HelpCircle className="mr-2 h-4 w-4" />
+                        Help
+                      </Button>
 
-                <Button variant="outline" size="sm" className="gap-1" onClick={handleSettings}>
-                  <Settings className="h-4 w-4" />
-                  <span>{t("settings.title")}</span>
-                </Button>
+                      <div className="grid grid-cols-3 gap-2">
+                        {availableLanguages.map((lang) => (
+                          <Button
+                            key={lang.code}
+                            variant={language === lang.code ? "default" : "outline"}
+                            className="w-full"
+                            onClick={() => setLanguage(lang.code)}
+                          >
+                            {lang.code.toUpperCase()}
+                          </Button>
+                        ))}
+                      </div>
 
-                {user && (
-                  <Button variant="outline" size="sm" className="gap-1" onClick={handleLogout}>
-                    <LogOut className="h-4 w-4" />
-                    <span>{t("user.logout")}</span>
+                      {!isSubscribed && !isTrialActive && (
+                        <Button variant="default" className="w-full justify-start" onClick={handleSubscription}>
+                          <Crown className="mr-2 h-4 w-4" />
+                          Subscribe for 3D
+                        </Button>
+                      )}
+
+                      {user && (
+                        <Button variant="destructive" className="w-full justify-start" onClick={handleLogout}>
+                          <LogOut className="mr-2 h-4 w-4" />
+                          {t("user.logout")}
+                        </Button>
+                      )}
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              ) : (
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-1">
+                        <Globe className="h-4 w-4" />
+                        <span>{language.toUpperCase()}</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {availableLanguages.map((lang) => (
+                        <DropdownMenuItem
+                          key={lang.code}
+                          onClick={() => setLanguage(lang.code)}
+                          className={language === lang.code ? "bg-primary/10" : ""}
+                        >
+                          {lang.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1"
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  >
+                    {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                   </Button>
-                )}
-              </>
-            )}
+
+                  <Button variant="outline" size="sm" className="gap-1" onClick={handleHelp}>
+                    <HelpCircle className="h-4 w-4" />
+                    <span>Help</span>
+                  </Button>
+
+                  {!isSubscribed && !isTrialActive && (
+                    <Button variant="default" size="sm" className="gap-1" onClick={handleSubscription}>
+                      <Crown className="h-4 w-4" />
+                      <span>Subscribe</span>
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Subscription Banner */}
-      <SubscriptionBanner />
+      {/* Subscription Banner - Only show for non-subscribed users */}
+      {!isSubscribed && !selectedMuscle && <SubscriptionBanner />}
     </div>
   )
 }

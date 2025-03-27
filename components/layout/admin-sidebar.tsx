@@ -5,7 +5,18 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { BarChart3, Users, FileVideo, Database, Settings, Home, Dumbbell, Cloud } from "lucide-react"
+import {
+  BarChart3,
+  Users,
+  FileVideo,
+  Database,
+  Settings,
+  Home,
+  Dumbbell,
+  Cloud,
+  HardDrive,
+  LineChart,
+} from "lucide-react"
 
 export function AdminSidebar() {
   const pathname = usePathname()
@@ -32,9 +43,19 @@ export function AdminSidebar() {
       icon: <FileVideo className="h-4 w-4 mr-2" />,
     },
     {
-      title: "Content",
-      href: "/admin/content",
+      title: "Database",
+      href: "/admin/database",
       icon: <Database className="h-4 w-4 mr-2" />,
+    },
+    {
+      title: "Content Storage",
+      href: "/admin/content-storage",
+      icon: <HardDrive className="h-4 w-4 mr-2" />,
+    },
+    {
+      title: "Analytics",
+      href: "/admin/analytics",
+      icon: <LineChart className="h-4 w-4 mr-2" />,
     },
     {
       title: "Environment",

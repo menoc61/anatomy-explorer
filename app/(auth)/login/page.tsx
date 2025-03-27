@@ -60,6 +60,13 @@ export default function LoginPage() {
     router.push("/admin")
   }
 
+  const handleUserLogin = async () => {
+    setEmail("user@user.com")
+    setPassword("user")
+    await login("user@user.com", "user")
+    router.push("/")
+  }
+
   // If already logged in, show loading while redirecting
   if (user) {
     return (
@@ -150,6 +157,22 @@ export default function LoginPage() {
                     onClick={handleAdminLogin}
                   >
                     Login as Admin
+                  </Button>
+                </AlertDescription>
+              </Alert>
+
+              <Alert className="bg-green-50 text-green-800 border-green-200">
+                <Info className="h-4 w-4" />
+                <AlertTitle className="text-sm font-medium">Premium User Login</AlertTitle>
+                <AlertDescription className="text-xs">
+                  Use <strong>user@user.com</strong> and password <strong>user</strong> to access premium features.
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2 w-full border-green-300 bg-green-100/50 hover:bg-green-100"
+                    onClick={handleUserLogin}
+                  >
+                    Login as Premium User
                   </Button>
                 </AlertDescription>
               </Alert>

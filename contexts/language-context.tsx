@@ -277,6 +277,56 @@ const translations: Translations = {
     fr: "À propos",
     ru: "О нас",
   },
+  "account.downloads": {
+    en: "My Downloads",
+    fr: "Mes Téléchargements",
+    ru: "Мои Загрузки",
+  },
+  "account.downloads.description": {
+    en: "Manage your downloaded content for offline access",
+    fr: "Gérez votre contenu téléchargé pour un accès hors ligne",
+    ru: "Управляйте загруженным контентом для офлайн-доступа",
+  },
+  "account.downloads.empty": {
+    en: "You haven't downloaded any content yet",
+    fr: "Vous n'avez pas encore téléchargé de contenu",
+    ru: "Вы еще не загрузили контент",
+  },
+  "account.downloads.search": {
+    en: "Search downloads",
+    fr: "Rechercher des téléchargements",
+    ru: "Поиск загрузок",
+  },
+  "account.downloads.filter": {
+    en: "Filter",
+    fr: "Filtrer",
+    ru: "Фильтр",
+  },
+  "account.downloads.sort": {
+    en: "Sort",
+    fr: "Trier",
+    ru: "Сортировка",
+  },
+  "account.downloads.offline": {
+    en: "Available Offline",
+    fr: "Disponible Hors Ligne",
+    ru: "Доступно Офлайн",
+  },
+  "account.downloads.online": {
+    en: "Online Only",
+    fr: "En Ligne Uniquement",
+    ru: "Только Онлайн",
+  },
+  "model.2d": {
+    en: "Try 2D View",
+    fr: "Essayer la Vue 2D",
+    ru: "Попробовать 2D Вид",
+  },
+  "model.3d": {
+    en: "Switch to 3D View",
+    fr: "Passer à la Vue 3D",
+    ru: "Переключиться на 3D Вид",
+  },
 }
 
 interface LanguageContextType {

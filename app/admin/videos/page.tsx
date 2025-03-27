@@ -3,17 +3,8 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,619 +13,391 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
 import {
-  Video,
-  Pencil,
-  Trash2,
-  MoreVertical,
-  Plus,
-  FileUp,
   Search,
-  Filter,
-  SortAsc,
-  SortDesc,
+  Plus,
+  MoreHorizontal,
+  Edit,
+  Trash,
   Eye,
-  Copy,
+  Download,
+  Filter,
+  ArrowUpDown,
+  Play,
+  Pause,
+  X,
 } from "lucide-react"
-import type { Video as VideoType } from "@/types"
-import { useI18n } from "@/contexts/i18n-context"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
+import Link from "next/link"
 
-export default function AdminVideosPage() {
-  const { t } = useI18n()
-  const { toast } = useToast()
-  const [videos, setVideos] = useState<VideoType[]>([
-    {
-      id: "video-1",
-      title: "Biceps Anatomy Overview",
-      description: "A detailed overview of the biceps brachii muscle anatomy",
-      url: "/videos/biceps-anatomy.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=500",
-      duration: 325, // in seconds
-      isPremium: true,
-      muscleId: "biceps",
-      createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "video-2",
-      title: "Quadriceps Function & Movement",
-      description: "Learn about the function and movement patterns of the quadriceps muscle group",
-      url: "/videos/quadriceps-function.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=500",
-      duration: 412, // in seconds
-      isPremium: true,
-      muscleId: "quadriceps",
-      createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "video-3",
-      title: "Abdominal Muscles Explained",
-      description: "A comprehensive explanation of the abdominal muscle group",
-      url: "/videos/abdominals-explained.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=500",
-      duration: 278, // in seconds
-      isPremium: false,
-      muscleId: "abdominals",
-      createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "video-4",
-      title: "Deltoid Training Techniques",
-      description: "Advanced training techniques for the deltoid muscle",
-      url: "/videos/deltoid-training.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=500",
-      duration: 345, // in seconds
-      isPremium: true,
-      muscleId: "deltoids",
-      createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "video-5",
-      title: "Pectoralis Major Anatomy",
-      description: "Detailed anatomy of the pectoralis major muscle",
-      url: "/videos/pectoralis-anatomy.mp4",
-      thumbnail: "/placeholder.svg?height=300&width=500",
-      duration: 298, // in seconds
-      isPremium: false,
-      muscleId: "pectoralis",
-      createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-  ])
+// Mock video data
+const mockVideos = [
+  {
+    id: "video-1",
+    title: "Biceps Brachii Anatomy",
+    description: "Detailed exploration of the biceps brachii muscle anatomy and function",
+    duration: "12:45",
+    status: "published",
+    category: "upper-limb",
+    views: 1245,
+    uploadDate: "2023-09-15",
+    thumbnail: "/placeholder.svg?height=720&width=1280",
+    url: "https://example.com/videos/biceps-brachii.mp4",
+  },
+  {
+    id: "video-2",
+    title: "Quadriceps Function and Movement",
+    description: "Analysis of quadriceps muscle group function during various movements",
+    duration: "18:22",
+    status: "published",
+    category: "lower-limb",
+    views: 982,
+    uploadDate: "2023-08-22",
+    thumbnail: "/placeholder.svg?height=720&width=1280",
+    url: "https://example.com/videos/quadriceps.mp4",
+  },
+  {
+    id: "video-3",
+    title: "Abdominal Muscles Overview",
+    description: "Comprehensive overview of the abdominal muscle groups",
+    duration: "15:10",
+    status: "draft",
+    category: "trunk",
+    views: 0,
+    uploadDate: "2023-10-05",
+    thumbnail: "/placeholder.svg?height=720&width=1280",
+    url: "https://example.com/videos/abdominals.mp4",
+  },
+  {
+    id: "video-4",
+    title: "Shoulder Anatomy Deep Dive",
+    description: "In-depth exploration of shoulder joint anatomy and surrounding muscles",
+    duration: "22:35",
+    status: "published",
+    category: "upper-limb",
+    views: 756,
+    uploadDate: "2023-07-12",
+    thumbnail: "/placeholder.svg?height=720&width=1280",
+    url: "https://example.com/videos/shoulder.mp4",
+  },
+  {
+    id: "video-5",
+    title: "Ankle Joint Biomechanics",
+    description: "Analysis of ankle joint movement and associated muscle actions",
+    duration: "14:18",
+    status: "published",
+    category: "lower-limb",
+    views: 543,
+    uploadDate: "2023-06-28",
+    thumbnail: "/placeholder.svg?height=720&width=1280",
+    url: "https://example.com/videos/ankle.mp4",
+  },
+  {
+    id: "video-6",
+    title: "Spinal Muscles and Posture",
+    description: "Exploration of spinal muscles and their role in maintaining posture",
+    duration: "19:47",
+    status: "review",
+    category: "trunk",
+    views: 0,
+    uploadDate: "2023-10-01",
+    thumbnail: "/placeholder.svg?height=720&width=1280",
+    url: "https://example.com/videos/spine.mp4",
+  },
+]
 
+export default function VideosPage() {
+  const [videos, setVideos] = useState(mockVideos)
   const [searchQuery, setSearchQuery] = useState("")
-  const [isAddVideoDialogOpen, setIsAddVideoDialogOpen] = useState(false)
-  const [isEditVideoDialogOpen, setIsEditVideoDialogOpen] = useState(false)
-  const [selectedVideo, setSelectedVideo] = useState<VideoType | null>(null)
-  const [newVideo, setNewVideo] = useState<Partial<VideoType>>({
-    title: "",
-    description: "",
-    url: "",
-    thumbnail: "",
-    duration: 0,
-    isPremium: false,
-    muscleId: "",
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+  const [previewVideo, setPreviewVideo] = useState<any>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const { toast } = useToast()
+
+  // Filter videos based on search query and filters
+  const filteredVideos = videos.filter((video) => {
+    const matchesSearch =
+      video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      video.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const matchesStatus = statusFilter === "all" || video.status === statusFilter
+    const matchesCategory = categoryFilter === "all" || video.category === categoryFilter
+
+    return matchesSearch && matchesStatus && matchesCategory
   })
-  const [activeTab, setActiveTab] = useState("all")
-  const [sortField, setSortField] = useState<"title" | "createdAt" | "duration">("createdAt")
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
 
-  const filteredVideos = videos
-    .filter((video) => {
-      const matchesSearch =
-        video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        video.description.toLowerCase().includes(searchQuery.toLowerCase())
-
-      if (activeTab === "all") return matchesSearch
-      if (activeTab === "premium") return matchesSearch && video.isPremium
-      if (activeTab === "free") return matchesSearch && !video.isPremium
-
-      return matchesSearch && video.muscleId === activeTab
-    })
-    .sort((a, b) => {
-      if (sortField === "title") {
-        return sortDirection === "asc" ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)
-      }
-
-      if (sortField === "duration") {
-        return sortDirection === "asc" ? a.duration - b.duration : b.duration - a.duration
-      }
-
-      // Default sort by createdAt
-      return sortDirection === "asc"
-        ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    })
-
-  const handleAddVideo = () => {
-    const videoToAdd: VideoType = {
-      id: `video-${Date.now()}`,
-      title: newVideo.title || "Untitled Video",
-      description: newVideo.description || "",
-      url: newVideo.url || "/videos/placeholder.mp4",
-      thumbnail: newVideo.thumbnail || "/placeholder.svg?height=300&width=500",
-      duration: newVideo.duration || 0,
-      isPremium: newVideo.isPremium || false,
-      muscleId: newVideo.muscleId || "biceps",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-
-    setVideos([videoToAdd, ...videos])
-    setNewVideo({
-      title: "",
-      description: "",
-      url: "",
-      thumbnail: "",
-      duration: 0,
-      isPremium: false,
-      muscleId: "",
-    })
-    setIsAddVideoDialogOpen(false)
-
+  const handleDeleteVideo = (videoId: string) => {
+    setVideos(videos.filter((video) => video.id !== videoId))
     toast({
-      title: "Video Added",
-      description: "The video has been successfully added to the library.",
-      duration: 3000,
+      title: "Video deleted",
+      description: "The video has been successfully deleted.",
     })
   }
 
-  const handleEditVideo = () => {
-    if (!selectedVideo) return
-
-    const updatedVideos = videos.map((video) =>
-      video.id === selectedVideo.id ? { ...selectedVideo, updatedAt: new Date().toISOString() } : video,
-    )
-
-    setVideos(updatedVideos)
-    setIsEditVideoDialogOpen(false)
-
-    toast({
-      title: "Video Updated",
-      description: "The video has been successfully updated.",
-      duration: 3000,
-    })
+  const handlePreviewVideo = (video: any) => {
+    setPreviewVideo(video)
+    setIsPlaying(true)
   }
 
-  const handleDeleteVideo = (id: string) => {
-    setVideos(videos.filter((video) => video.id !== id))
-
-    toast({
-      title: "Video Deleted",
-      description: "The video has been successfully removed from the library.",
-      duration: 3000,
-    })
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying)
   }
 
-  const formatDuration = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
-  }
-
-  const handleEditClick = (video: VideoType) => {
-    setSelectedVideo(video)
-    setIsEditVideoDialogOpen(true)
-  }
-
-  const handleDuplicateVideo = (video: VideoType) => {
-    const duplicatedVideo: VideoType = {
-      ...video,
-      id: `video-${Date.now()}`,
-      title: `${video.title} (Copy)`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-
-    setVideos([duplicatedVideo, ...videos])
-
-    toast({
-      title: "Video Duplicated",
-      description: "A copy of the video has been created.",
-      duration: 3000,
-    })
-  }
-
-  const toggleSort = (field: "title" | "createdAt" | "duration") => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
-    } else {
-      setSortField(field)
-      setSortDirection("asc")
-    }
+  const closePreview = () => {
+    setPreviewVideo(null)
+    setIsPlaying(false)
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("admin.videos")}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Videos</h1>
           <p className="text-muted-foreground">Manage educational videos for the anatomy explorer</p>
         </div>
-        <Dialog open={isAddVideoDialogOpen} onOpenChange={setIsAddVideoDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              {t("admin.addVideo")}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{t("admin.addVideo")}</DialogTitle>
-              <DialogDescription>Upload a new educational video for the anatomy explorer</DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="title" className="text-right">
-                  {t("admin.videoTitle")}
-                </Label>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => window.history.back()}>
+            Back
+          </Button>
+          <Button asChild>
+            <Link href="/admin/videos/upload">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Video
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Video Management</CardTitle>
+          <CardDescription>View and manage all educational videos</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  id="title"
-                  value={newVideo.title}
-                  onChange={(e) => setNewVideo({ ...newVideo, title: e.target.value })}
-                  className="col-span-3"
+                  placeholder="Search videos..."
+                  className="pl-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
-                  {t("admin.videoDescription")}
-                </Label>
-                <Textarea
-                  id="description"
-                  value={newVideo.description}
-                  onChange={(e) => setNewVideo({ ...newVideo, description: e.target.value })}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="muscle" className="text-right">
-                  {t("admin.videoMuscle")}
-                </Label>
-                <Select
-                  value={newVideo.muscleId}
-                  onValueChange={(value) => setNewVideo({ ...newVideo, muscleId: value })}
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select muscle group" />
+              <div className="flex flex-wrap gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[130px]">
+                    <Filter className="mr-2 h-4 w-4" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="biceps">Biceps Brachii</SelectItem>
-                    <SelectItem value="triceps">Triceps Brachii</SelectItem>
-                    <SelectItem value="deltoids">Deltoid Muscle</SelectItem>
-                    <SelectItem value="pectoralis">Pectoralis Major</SelectItem>
-                    <SelectItem value="quadriceps">Quadriceps</SelectItem>
-                    <SelectItem value="hamstrings">Hamstrings</SelectItem>
-                    <SelectItem value="gastrocnemius">Gastrocnemius</SelectItem>
-                    <SelectItem value="trapezius">Trapezius</SelectItem>
-                    <SelectItem value="latissimus">Latissimus Dorsi</SelectItem>
-                    <SelectItem value="abdominals">Abdominal Muscles</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="review">In Review</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-[150px]">
+                    <Filter className="mr-2 h-4 w-4" />
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="upper-limb">Upper Limb</SelectItem>
+                    <SelectItem value="lower-limb">Lower Limb</SelectItem>
+                    <SelectItem value="trunk">Trunk</SelectItem>
+                    <SelectItem value="head-neck">Head & Neck</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="duration" className="text-right">
-                  {t("admin.videoDuration")} (seconds)
-                </Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  value={newVideo.duration || ""}
-                  onChange={(e) => setNewVideo({ ...newVideo, duration: Number.parseInt(e.target.value) || 0 })}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="video-file" className="text-right">
-                  Video File
-                </Label>
-                <div className="col-span-3">
-                  <Button variant="outline" className="w-full">
-                    <FileUp className="h-4 w-4 mr-2" />
-                    Upload Video
-                  </Button>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="thumbnail" className="text-right">
-                  Thumbnail
-                </Label>
-                <div className="col-span-3">
-                  <Button variant="outline" className="w-full">
-                    <FileUp className="h-4 w-4 mr-2" />
-                    Upload Thumbnail
-                  </Button>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="premium" className="text-right">
-                  {t("admin.videoPremium")}
-                </Label>
-                <div className="flex items-center space-x-2 col-span-3">
-                  <Checkbox
-                    id="premium"
-                    checked={newVideo.isPremium}
-                    onCheckedChange={(checked) => setNewVideo({ ...newVideo, isPremium: checked as boolean })}
-                  />
-                  <label
-                    htmlFor="premium"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Restrict to premium subscribers only
-                  </label>
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddVideoDialogOpen(false)}>
-                {t("actions.cancel")}
-              </Button>
-              <Button onClick={handleAddVideo}>{t("actions.add")}</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Edit Video Dialog */}
-        <Dialog open={isEditVideoDialogOpen} onOpenChange={setIsEditVideoDialogOpen}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{t("admin.editVideo")}</DialogTitle>
-              <DialogDescription>Edit video details</DialogDescription>
-            </DialogHeader>
-            {selectedVideo && (
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="edit-title" className="text-right">
-                    {t("admin.videoTitle")}
-                  </Label>
-                  <Input
-                    id="edit-title"
-                    value={selectedVideo.title}
-                    onChange={(e) => setSelectedVideo({ ...selectedVideo, title: e.target.value })}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="edit-description" className="text-right">
-                    {t("admin.videoDescription")}
-                  </Label>
-                  <Textarea
-                    id="edit-description"
-                    value={selectedVideo.description}
-                    onChange={(e) => setSelectedVideo({ ...selectedVideo, description: e.target.value })}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="edit-muscle" className="text-right">
-                    {t("admin.videoMuscle")}
-                  </Label>
-                  <Select
-                    value={selectedVideo.muscleId}
-                    onValueChange={(value) => setSelectedVideo({ ...selectedVideo, muscleId: value })}
-                  >
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Select muscle group" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="biceps">Biceps Brachii</SelectItem>
-                      <SelectItem value="triceps">Triceps Brachii</SelectItem>
-                      <SelectItem value="deltoids">Deltoid Muscle</SelectItem>
-                      <SelectItem value="pectoralis">Pectoralis Major</SelectItem>
-                      <SelectItem value="quadriceps">Quadriceps</SelectItem>
-                      <SelectItem value="hamstrings">Hamstrings</SelectItem>
-                      <SelectItem value="gastrocnemius">Gastrocnemius</SelectItem>
-                      <SelectItem value="trapezius">Trapezius</SelectItem>
-                      <SelectItem value="latissimus">Latissimus Dorsi</SelectItem>
-                      <SelectItem value="abdominals">Abdominal Muscles</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="edit-duration" className="text-right">
-                    {t("admin.videoDuration")} (seconds)
-                  </Label>
-                  <Input
-                    id="edit-duration"
-                    type="number"
-                    value={selectedVideo.duration}
-                    onChange={(e) =>
-                      setSelectedVideo({ ...selectedVideo, duration: Number.parseInt(e.target.value) || 0 })
-                    }
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="edit-premium" className="text-right">
-                    {t("admin.videoPremium")}
-                  </Label>
-                  <div className="flex items-center space-x-2 col-span-3">
-                    <Checkbox
-                      id="edit-premium"
-                      checked={selectedVideo.isPremium}
-                      onCheckedChange={(checked) =>
-                        setSelectedVideo({ ...selectedVideo, isPremium: checked as boolean })
-                      }
-                    />
-                    <label
-                      htmlFor="edit-premium"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Restrict to premium subscribers only
-                    </label>
-                  </div>
-                </div>
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsEditVideoDialogOpen(false)}>
-                {t("actions.cancel")}
-              </Button>
-              <Button onClick={handleEditVideo}>{t("actions.save")}</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
-          <TabsList className="h-auto">
-            <TabsTrigger value="all">All Videos</TabsTrigger>
-            <TabsTrigger value="premium">Premium</TabsTrigger>
-            <TabsTrigger value="free">Free</TabsTrigger>
-            <TabsTrigger value="biceps">Biceps</TabsTrigger>
-            <TabsTrigger value="quadriceps">Quadriceps</TabsTrigger>
-          </TabsList>
-
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search videos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
-              />
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Filter className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter Videos</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setActiveTab("all")}>All Videos</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab("premium")}>Premium Only</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab("free")}>Free Videos</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  {sortDirection === "asc" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Sort Videos</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => toggleSort("title")}>
-                  By Title {sortField === "title" && (sortDirection === "asc" ? "↑" : "↓")}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toggleSort("createdAt")}>
-                  By Date {sortField === "createdAt" && (sortDirection === "asc" ? "↑" : "↓")}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toggleSort("duration")}>
-                  By Duration {sortField === "duration" && (sortDirection === "asc" ? "↑" : "↓")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
-        <TabsContent value={activeTab} className="space-y-4">
-          <Card>
-            <CardContent className="p-0">
+            <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Title</TableHead>
-                    <TableHead>Muscle Group</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>
+                      <div className="flex items-center">
+                        Status
+                        <ArrowUpDown className="ml-1 h-3 w-3" />
+                      </div>
+                    </TableHead>
+                    <TableHead>
+                      <div className="flex items-center">
+                        Category
+                        <ArrowUpDown className="ml-1 h-3 w-3" />
+                      </div>
+                    </TableHead>
                     <TableHead>Duration</TableHead>
-                    <TableHead>Premium</TableHead>
-                    <TableHead>Added</TableHead>
+                    <TableHead>
+                      <div className="flex items-center">
+                        Views
+                        <ArrowUpDown className="ml-1 h-3 w-3" />
+                      </div>
+                    </TableHead>
+                    <TableHead>Upload Date</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredVideos.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
-                        No videos found.
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        No videos found matching your filters
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredVideos.map((video) => (
                       <TableRow key={video.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            <div className="w-10 h-6 bg-muted rounded flex items-center justify-center">
-                              <Video className="h-3 w-3" />
-                            </div>
-                            {video.title}
-                          </div>
-                        </TableCell>
-                        <TableCell>{video.muscleId.charAt(0).toUpperCase() + video.muscleId.slice(1)}</TableCell>
-                        <TableCell>{formatDuration(video.duration)}</TableCell>
+                        <TableCell className="font-medium">{video.title}</TableCell>
                         <TableCell>
-                          {video.isPremium ? (
-                            <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
-                              Premium
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                              Free
-                            </span>
-                          )}
+                          <Badge
+                            variant={
+                              video.status === "published"
+                                ? "success"
+                                : video.status === "review"
+                                  ? "warning"
+                                  : "outline"
+                            }
+                          >
+                            {video.status.charAt(0).toUpperCase() + video.status.slice(1)}
+                          </Badge>
                         </TableCell>
-                        <TableCell>{formatDate(video.createdAt)}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {video.category
+                              .split("-")
+                              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                              .join(" ")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{video.duration}</TableCell>
+                        <TableCell>{video.views.toLocaleString()}</TableCell>
+                        <TableCell>{video.uploadDate}</TableCell>
                         <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem onClick={() => handleEditClick(video)}>
-                                <Pencil className="h-4 w-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Eye className="h-4 w-4 mr-2" />
-                                Preview
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDuplicateVideo(video)}>
-                                <Copy className="h-4 w-4 mr-2" />
-                                Duplicate
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => handleDeleteVideo(video.id)}
-                                className="text-red-500 focus:text-red-500"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="icon" onClick={() => handlePreviewVideo(video)}>
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem>
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                  <Download className="mr-2 h-4 w-4" />
+                                  Download
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteVideo(video.id)}>
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))
                   )}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Showing <strong>{filteredVideos.length}</strong> of <strong>{videos.length}</strong> videos
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm">
+                  Previous
+                </Button>
+                <Button variant="outline" size="sm">
+                  Next
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Video Preview Dialog */}
+      <Dialog open={previewVideo !== null} onOpenChange={(open) => !open && closePreview()}>
+        <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
+          <div className="relative bg-black aspect-video">
+            {/* Video player would go here - using placeholder for demo */}
+            <div className="w-full h-full flex items-center justify-center">
+              <img
+                src={previewVideo?.thumbnail || "/placeholder.svg"}
+                alt={previewVideo?.title}
+                className="w-full h-full object-contain"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-16 w-16 rounded-full bg-black/50 text-white hover:bg-black/70"
+                  onClick={togglePlayPause}
+                >
+                  {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+                </Button>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/50 text-white hover:bg-black/70"
+              onClick={closePreview}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="p-6">
+            <h2 className="text-xl font-semibold">{previewVideo?.title}</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              {previewVideo?.duration} • {previewVideo?.views.toLocaleString()} views
+            </p>
+            <p className="mt-4">{previewVideo?.description}</p>
+            <div className="flex justify-between items-center mt-6">
+              <Badge variant="outline">
+                {previewVideo?.category
+                  .split("-")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" ")}
+              </Badge>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download
+                </Button>
+                <Button size="sm">
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
