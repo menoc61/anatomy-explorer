@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
 import { Loader2, Plus, Edit, Trash, Check, X } from "lucide-react"
-import AdminLayout from "@/components/admin/admin-layout"
+import AdminSidebar from "@/app/admin/layout"
 
 // Mock subscription plans data
 const subscriptionPlans = [
@@ -170,7 +170,7 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <AdminLayout>
+    <AdminSidebar>
       <div className="container mx-auto py-6">
         <h1 className="text-3xl font-bold mb-6">Subscription Management</h1>
 
@@ -198,7 +198,7 @@ export default function SubscriptionPage() {
                         ${plan.price}/{plan.interval}
                       </CardDescription>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap=2">
                       <Switch
                         checked={plan.isActive}
                         onCheckedChange={(checked) => handlePlanToggle(plan.id, checked)}
@@ -240,7 +240,7 @@ export default function SubscriptionPage() {
                         Edit
                       </Button>
                       <Button variant="destructive">
-                        <Trash className="mr-2 h-4 w-4" />
+                        <Trash className="mr=2 h-4 w-4" />
                         Delete
                       </Button>
                     </>
@@ -334,7 +334,6 @@ export default function SubscriptionPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    </AdminSidebar>
   )
 }
-

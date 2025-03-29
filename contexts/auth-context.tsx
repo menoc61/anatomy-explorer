@@ -15,8 +15,8 @@ interface AuthStore {
   clearStore: () => void
 }
 
-const useAuthStore = create<AuthStore>()(
-  persist(
+const useAuthStore = create(
+  persist<AuthStore>(
     (set) => ({
       user: null,
       isAdmin: false,
@@ -79,12 +79,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const expiryDate = user.subscription ? new Date(user.subscription.expiresAt) : null
 
           // If subscription has expired, update it
-          if (expiryDate && expiryDate < now && user.subscription.status !== "expired") {
+          if (expiryDate && expiryDate < now && user.subscription.status !== "inactive") {
             const updatedUser = {
               ...user,
               subscription: {
                 ...user.subscription,
-                status: "expired",
+                status: "inactive",
               },
             }
             setUser(updatedUser)
@@ -235,4 +235,3 @@ export function useAuth() {
   }
   return context
 }
-

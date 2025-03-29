@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useTheme } from "next-themes"
 
-interface SketchfabViewerProps {
+export interface SketchfabViewerProps {
   modelId: string
   onAnnotationSelect?: (annotationId: string) => void
   selectedMuscle?: string | null
@@ -122,14 +122,16 @@ export default function SketchfabViewer({
     apiRef.current.setBackground(...bgColor)
   }, [theme, isInitialized])
 
+  // Feature detect loading attribute support
+  const loadingAttributeSupported = 'loading' in HTMLImageElement.prototype
+  
   return (
     <iframe
       ref={iframeRef}
       title="Sketchfab Viewer"
       className="w-full h-full border-0"
       allow="autoplay; fullscreen; xr-spatial-tracking"
-      loading="eager"
+      {...(loadingAttributeSupported ? { loading: "eager" } : {})}
     />
   )
 }
-

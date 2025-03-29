@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
 import { Loader2, Download } from "lucide-react"
-import AdminLayout from "@/components/admin/admin-layout"
+import {AdminSidebar} from "@/components/admin/admin-sidebar"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 // Mock data for user growth prediction
@@ -132,7 +132,7 @@ export default function PredictionsPage() {
   }
 
   return (
-    <AdminLayout>
+    <AdminSidebar>
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Predictions & Analytics</h1>
@@ -334,28 +334,28 @@ export default function PredictionsPage() {
                       <div className="flex items-center">
                         <div className="w-32">3D Models</div>
                         <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden">
-                          <div className="bg-primary h-full rounded-full" style={{ width: "85%" }}></div>
+                          <div className="bg-primary h-full rounded-full progress-bar-85"></div>
                         </div>
                         <div className="w-12 text-right">85%</div>
                       </div>
                       <div className="flex items-center">
                         <div className="w-32">Videos</div>
                         <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden">
-                          <div className="bg-primary h-full rounded-full" style={{ width: "70%" }}></div>
+                          <div className="bg-primary h-full rounded-full progress-bar-70"></div>
                         </div>
                         <div className="w-12 text-right">70%</div>
                       </div>
                       <div className="flex items-center">
                         <div className="w-32">Comments</div>
                         <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden">
-                          <div className="bg-primary h-full rounded-full" style={{ width: "45%" }}></div>
+                          <div className="bg-primary h-full rounded-full progress-bar-45"></div>
                         </div>
                         <div className="w-12 text-right">45%</div>
                       </div>
                       <div className="flex items-center">
                         <div className="w-32">Downloads</div>
                         <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden">
-                          <div className="bg-primary h-full rounded-full" style={{ width: "60%" }}></div>
+                          <div className="bg-primary h-full rounded-full progress-bar-60"></div>
                         </div>
                         <div className="w-12 text-right">60%</div>
                       </div>
@@ -466,7 +466,7 @@ export default function PredictionsPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+    </AdminSidebar>
   )
 }
 

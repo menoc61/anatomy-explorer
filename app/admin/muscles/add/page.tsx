@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 import { Loader2, ArrowLeft, Upload, X } from "lucide-react"
-import AdminLayout from "@/components/admin/admin-layout"
+import {AdminSidebar} from "@/components/admin/admin-sidebar"
 
 export default function AddMusclePage() {
   const router = useRouter()
@@ -121,7 +121,7 @@ export default function AddMusclePage() {
   }
 
   return (
-    <AdminLayout>
+    <AdminSidebar>
       <div className="container mx-auto py-6">
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="sm" onClick={() => router.back()} className="mr-4">
@@ -303,7 +303,7 @@ export default function AddMusclePage() {
           </CardFooter>
         </Card>
       </div>
-    </AdminLayout>
+    </AdminSidebar>
   )
 }
 

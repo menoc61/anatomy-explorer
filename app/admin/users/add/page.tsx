@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 import { Loader2, ArrowLeft } from "lucide-react"
-import AdminLayout from "@/components/admin/admin-layout"
+import {AdminSidebar} from "@/components/admin/admin-sidebar"
 
 export default function AddUserPage() {
   const router = useRouter()
@@ -93,7 +93,7 @@ export default function AddUserPage() {
   }
 
   return (
-    <AdminLayout>
+    <AdminSidebar>
       <div className="container mx-auto py-6">
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="sm" onClick={() => router.back()} className="mr-4">
@@ -135,7 +135,7 @@ export default function AddUserPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
-                <Select value={formData.role} onValueChange={(value) => handleSelectChange("role", value)}>
+                <Select value={formData.role} onValueChange={(value: string) => handleSelectChange("role", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
@@ -155,11 +155,11 @@ export default function AddUserPage() {
                 <Switch
                   id="isActive"
                   checked={formData.isActive}
-                  onCheckedChange={(checked) => handleSwitchChange("isActive", checked)}
+                  onCheckedChange={(checked:boolean) => handleSwitchChange("isActive", checked)}
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label htmlFor="sendInvite">Send Invitation Email</Label>
                   <p className="text-sm text-muted-foreground">Send an email invitation to set up their account</p>
@@ -167,9 +167,9 @@ export default function AddUserPage() {
                 <Switch
                   id="sendInvite"
                   checked={formData.sendInvite}
-                  onCheckedChange={(checked) => handleSwitchChange("sendInvite", checked)}
+                  onCheckedChange={(checked: boolean) => handleSwitchChange("sendInvite", checked)}
                 />
-              </div>
+                </div>
 
               {!formData.sendInvite && (
                 <div className="space-y-2">
@@ -200,7 +200,6 @@ export default function AddUserPage() {
           </CardFooter>
         </Card>
       </div>
-    </AdminLayout>
+    </AdminSidebar>
   )
 }
-

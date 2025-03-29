@@ -114,7 +114,7 @@ export const uploadToBlob = async (file: File): Promise<string> => {
 }
 
 // Supabase API
-export const queryDatabase = async <T>(\
+export const queryDatabase = async <T>(
   query: string, 
   params: any[] = [], 
   fallback: T

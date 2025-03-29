@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 import { Loader2, ArrowLeft, Video } from "lucide-react"
-import AdminLayout from "@/components/admin/admin-layout"
+import { AdminSidebar } from "@/components/admin/admin-sidebar"
 
 // Mock video data
 const mockVideo = {
@@ -140,18 +140,18 @@ export default function DuplicateVideoPage({ params }: { params: { id: string } 
 
   if (isLoading) {
     return (
-      <AdminLayout>
+      <AdminSidebar>
         <div className="container mx-auto py-6">
           <div className="flex items-center justify-center min-h-[60vh]">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         </div>
-      </AdminLayout>
+      </AdminSidebar>
     )
   }
 
   return (
-    <AdminLayout>
+    <AdminSidebar>
       <div className="container mx-auto py-6">
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="sm" onClick={() => router.back()} className="mr-4">
@@ -272,7 +272,6 @@ export default function DuplicateVideoPage({ params }: { params: { id: string } 
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AdminSidebar>
   )
 }
-

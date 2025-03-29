@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { Loader2, CheckCircle2, Crown, CreditCard, Calendar, AlertCircle } from "lucide-react"
+import { Loader2, CheckCircle2, Crown, CreditCard, Calendar, AlertCircle, ArrowLeft } from "lucide-react"
 import type { Subscription } from "@/types"
 import { useToast } from "@/hooks/use-toast"
 
@@ -102,8 +103,17 @@ export default function SubscriptionPage() {
   return (
     <div className="container max-w-5xl py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">{t("subscription.title")}</h1>
-        <p className="text-muted-foreground mt-2">Choose the plan that works best for you</p>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/account">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">{t("subscription.title")}</h1>
+            <p className="text-muted-foreground mt-2">Choose the plan that works best for you</p>
+          </div>
+        </div>
       </div>
 
       {isActive && (
@@ -249,4 +259,3 @@ export default function SubscriptionPage() {
     </div>
   )
 }
-

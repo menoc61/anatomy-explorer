@@ -14,14 +14,12 @@ export async function POST(req: NextRequest) {
       from: "Acme <onboarding@resend.dev>",
       to: ["delivered@resend.dev"],
       subject: "Message from Contact Form",
-      react: (
-        <>
-          <p>First Name: {firstName}</p>
-          <p>Last Name: {lastName}</p>
-          <p>Email: {email}</p>
-          <p>Message: {message}</p>
-        </>
-      ),
+      html: `
+        <p>First Name: ${firstName}</p>
+        <p>Last Name: ${lastName}</p>
+        <p>Email: ${email}</p>
+        <p>Message: ${message}</p>
+      `,
     })
 
     return NextResponse.json({ data })
@@ -29,4 +27,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error })
   }
 }
-

@@ -3,7 +3,7 @@ import { AdminHeader } from "@/components/layout/admin-header"
 import { AdminSidebar } from "@/components/layout/admin-sidebar"
 import AdminGuard from "@/components/admin-guard"
 
-export default function AdminLayout({
+export default function AdminSidebar({
   children,
 }: Readonly<{
   children: React.ReactNode

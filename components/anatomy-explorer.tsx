@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   X,
@@ -54,18 +54,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 
-// Dynamically import the SketchfabViewer to reduce initial load time
-const SketchfabViewer = dynamic(() => import("@/components/sketchfab-viewer"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800">
-      <div className="flex flex-col items-center">
-        <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin mb-4"></div>
-        <p className="text-foreground">Loading 3D Model...</p>
-      </div>
-    </div>
-  ),
-})
+import SketchfabViewerWrapper from "@/components/sketchfab-viewer-wrapper"
 
 export default function AnatomyExplorer() {
   const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null)
@@ -106,16 +95,16 @@ export default function AnatomyExplorer() {
     }
   }, [isSubscribed, isTrialActive])
 
-  const handleMuscleSelect = (muscleId: string) => {
+  const handleMuscleSelect = useCallback((muscleId: string) => {
     setSelectedMuscle(muscleId)
     setActiveTab("overview")
     setShowUserWidget(false) // Hide user widget when a muscle is selected
-  }
+  }, [])
 
-  const handleBackToMuscleGroups = () => {
+  const handleBackToMuscleGroups = useCallback(() => {
     setSelectedMuscle(null)
     setShowUserWidget(true) // Show user widget when returning to muscle groups
-  }
+  }, [])
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -128,12 +117,12 @@ export default function AnatomyExplorer() {
     setIsFullscreen(!isFullscreen)
   }
 
-  const handleModelError = () => {
+  const handleModelError = useCallback(() => {
     setModelError(true)
     setUse3DModel(false)
-  }
+  }, [])
 
-  const toggleModelType = () => {
+  const toggleModelType = useCallback(() => {
     // Only allow 3D model for subscribed users or users in trial period
     if (!use3DModel && !isSubscribed && !isTrialActive) {
       router.push("/account/subscription")
@@ -141,35 +130,35 @@ export default function AnatomyExplorer() {
     }
 
     setUse3DModel(!use3DModel)
-  }
+  }, [use3DModel, isSubscribed, isTrialActive, router])
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout()
-  }
+  }, [logout])
 
-  const handleProfile = () => {
+  const handleProfile = useCallback(() => {
     router.push("/account/profile")
-  }
+  }, [router])
 
-  const handleSubscription = () => {
+  const handleSubscription = useCallback(() => {
     router.push("/account/subscription")
-  }
+  }, [router])
 
-  const handleHelp = () => {
+  const handleHelp = useCallback(() => {
     router.push("/help")
-  }
+  }, [router])
 
-  const handleAdmin = () => {
+  const handleAdmin = useCallback(() => {
     router.push("/admin")
-  }
+  }, [router])
 
-  const handleVideoManagement = () => {
+  const handleVideoManagement = useCallback(() => {
     router.push("/admin/videos")
-  }
+  }, [router])
 
-  const handlePredictions = () => {
+  const handlePredictions = useCallback(() => {
     router.push("/predictions")
-  }
+  }, [router])
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -241,7 +230,7 @@ export default function AnatomyExplorer() {
         )}
 
         {use3DModel ? (
-          <SketchfabViewer
+          <SketchfabViewerWrapper
             modelId="31b40fd809b14665b93773936d67c52c"
             onAnnotationSelect={handleMuscleSelect}
             selectedMuscle={selectedMuscle}
@@ -676,4 +665,3 @@ export default function AnatomyExplorer() {
     </div>
   )
 }
-

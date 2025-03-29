@@ -8,22 +8,39 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/contexts/auth-context"
 import { ArrowLeft, BarChart3, LineChart, TrendingUp, Users } from "lucide-react"
 import Link from "next/link"
-
-// Import chart components
 import {
-  Chart,
-  ChartContainer,
-  ChartTooltip,
-  ChartLegend,
-  ChartTitle,
-  ChartXAxis,
-  ChartYAxis,
-  ChartGrid,
-  ChartLine,
-  ChartBar,
-  ChartArea,
-  ChartPie,
-} from "@/components/ui/chart"
+  LineChart as RechartsLineChart,
+  BarChart as RechartsBarChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from "recharts"
+import { ChartContainer, ChartTooltip, ChartLegend } from "@/components/ui/chart"
+
+const chartConfig = {
+  predictions: {
+    label: "Predictions",
+    color: "#3b82f6"
+  },
+  accuracy: {
+    label: "Accuracy (%)", 
+    color: "#10b981"
+  },
+  users: {
+    label: "Users",
+    color: "#8b5cf6"
+  }
+}
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28DFF', '#FF6B6B', '#4FD1C5', '#F687B3'];
 
 export default function PredictionsPage() {
   const { user, isAdmin } = useAuth()
@@ -184,7 +201,6 @@ export default function PredictionsPage() {
                     <SelectContent>
                       <SelectItem value="line">Line</SelectItem>
                       <SelectItem value="bar">Bar</SelectItem>
-                      <SelectItem value="area">Area</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -193,59 +209,41 @@ export default function PredictionsPage() {
             </CardHeader>
             <CardContent>
               <div className="h-[350px]">
-                <ChartContainer>
-                  <ChartTitle>Predictions and Accuracy</ChartTitle>
-                  <Chart className="h-[300px]">
-                    <ChartLegend />
-                    <ChartGrid x y />
-                    <ChartXAxis dataKey="date" />
-                    <ChartYAxis />
-                    <ChartTooltip />
-                    {chartType === "line" && (
-                      <>
-                        <ChartLine
+                <ChartContainer config={chartConfig}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    {chartType === "line" ? (
+                      <RechartsLineChart data={filteredData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip content={<ChartTooltip />} />
+                        <Legend content={<ChartLegend />} />
+                        <Line
+                          type="monotone"
                           dataKey="predictions"
-                          name="Predictions"
                           stroke="#3b82f6"
                           strokeWidth={2}
-                          data={filteredData}
+                          activeDot={{ r: 8 }}
                         />
-                        <ChartLine
+                        <Line
+                          type="monotone"
                           dataKey="accuracy"
-                          name="Accuracy (%)"
                           stroke="#10b981"
                           strokeWidth={2}
-                          data={filteredData}
                         />
-                      </>
+                      </RechartsLineChart>
+                    ) : (
+                      <RechartsBarChart data={filteredData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip content={<ChartTooltip />} />
+                        <Legend content={<ChartLegend />} />
+                        <Bar dataKey="predictions" fill="#3b82f6" />
+                        <Bar dataKey="accuracy" fill="#10b981" />
+                      </RechartsBarChart>
                     )}
-                    {chartType === "bar" && (
-                      <>
-                        <ChartBar dataKey="predictions" name="Predictions" fill="#3b82f6" data={filteredData} />
-                        <ChartBar dataKey="accuracy" name="Accuracy (%)" fill="#10b981" data={filteredData} />
-                      </>
-                    )}
-                    {chartType === "area" && (
-                      <>
-                        <ChartArea
-                          dataKey="predictions"
-                          name="Predictions"
-                          fill="#3b82f6"
-                          fillOpacity={0.2}
-                          stroke="#3b82f6"
-                          data={filteredData}
-                        />
-                        <ChartArea
-                          dataKey="accuracy"
-                          name="Accuracy (%)"
-                          fill="#10b981"
-                          fillOpacity={0.2}
-                          stroke="#10b981"
-                          data={filteredData}
-                        />
-                      </>
-                    )}
-                  </Chart>
+                  </ResponsiveContainer>
                 </ChartContainer>
               </div>
             </CardContent>
@@ -259,20 +257,25 @@ export default function PredictionsPage() {
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
-                <ChartContainer>
-                  <Chart className="h-[300px]">
-                    <ChartPie
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
                       data={muscleData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
                       dataKey="value"
-                      nameKey="name"
-                      innerRadius={70}
-                      outerRadius={90}
-                      paddingAngle={2}
-                    />
-                    <ChartTooltip />
-                    <ChartLegend />
-                  </Chart>
-                </ChartContainer>
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {muscleData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
@@ -286,14 +289,17 @@ export default function PredictionsPage() {
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
-            <ChartContainer>
-              <Chart className="h-[300px]">
-                <ChartGrid x y />
-                <ChartXAxis dataKey="muscle" />
-                <ChartYAxis domain={[80, 100]} />
-                <ChartTooltip />
-                <ChartBar dataKey="accuracy" name="Accuracy (%)" fill="#3b82f6" data={accuracyByMuscle} />
-              </Chart>
+            <ChartContainer config={chartConfig}>
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsBarChart data={accuracyByMuscle}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="muscle" />
+                  <YAxis domain={[80, 100]} />
+                  <Tooltip content={<ChartTooltip />} />
+                  <Legend content={<ChartLegend />} />
+                  <Bar dataKey="accuracy" fill="#3b82f6" />
+                </RechartsBarChart>
+              </ResponsiveContainer>
             </ChartContainer>
           </div>
         </CardContent>
@@ -301,4 +307,3 @@ export default function PredictionsPage() {
     </div>
   )
 }
-

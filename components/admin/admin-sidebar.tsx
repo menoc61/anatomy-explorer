@@ -11,7 +11,7 @@ import {
   Video,
 } from "lucide-react"
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarItem, SidebarNav } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton } from "@/components/ui/sidebar"
 
 const navItems = [
   {
@@ -66,27 +66,37 @@ const navItems = [
   },
 ]
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  children?: React.ReactNode
+}
+
+export function AdminSidebar({ children }: AdminSidebarProps) {
   return (
-    <Sidebar className="w-60">
+    <div className="flex">
+      <Sidebar className="w-60">
       <SidebarHeader>
         {/* You can add a logo or title here */}
         <p className="text-xl font-semibold">Admin Panel</p>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarNav>
+        <SidebarMenu>
           {navItems.map((item) => (
-            <SidebarItem key={item.href} href={item.href} icon={item.icon}>
-              {item.title}
-            </SidebarItem>
+            <SidebarMenuButton key={item.href} asChild>
+              <a href={item.href} className="flex items-center gap-2">
+                {item.icon}
+                {item.title}
+              </a>
+            </SidebarMenuButton>
           ))}
-        </SidebarNav>
+        </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        {/* Optional: Add a footer with user info or settings */}
         <p className="text-xs text-muted-foreground">Footer Content</p>
       </SidebarFooter>
-    </Sidebar>
+      </Sidebar>
+      <main className="flex-1 overflow-auto">
+        {children}
+      </main>
+    </div>
   )
 }
-

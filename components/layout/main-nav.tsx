@@ -3,8 +3,8 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/hooks/use-auth"
-import { useLanguage } from "@/hooks/use-language"
+import { useAuth } from "@/contexts/auth-context"
+import { useLanguage } from "@/contexts/language-context"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import {
@@ -50,13 +50,8 @@ export function MainNav() {
     },
     {
       name: t("nav.learn"),
-      href: "/learn",
+      href: "/account/downloads",
       icon: <BookOpen className="h-4 w-4 mr-2" />,
-    },
-    {
-      name: t("nav.videos"),
-      href: "/videos",
-      icon: <Video className="h-4 w-4 mr-2" />,
     },
   ]
 
@@ -88,16 +83,16 @@ export function MainNav() {
   const displayNavItems = isAdmin && pathname.startsWith("/admin") ? adminNavItems : navItems
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-6 lg:gap-10">
+    <div className="flex items-center justify-between px-4 py-3 md:px-6">
+      <div className="flex items-center gap-4 md:gap-8">
         <Link href="/" className="flex items-center space-x-2">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
             <Dumbbell className="h-4 w-4" />
           </div>
-          <span className="font-bold text-xl hidden md:inline-block">{t("app.title")}</span>
-          <span className="font-bold text-xl md:hidden">AE</span>
+          <span className="font-bold text-lg md:text-xl hidden sm:inline-block">{t("app.title")}</span>
+          <span className="font-bold text-lg md:text-xl sm:hidden">AE</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-4">
           {displayNavItems.map((item) => (
             <Link
               key={item.href}
@@ -114,8 +109,8 @@ export function MainNav() {
         </nav>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="border rounded-full overflow-hidden flex items-center">
+      <div className="flex items-center gap-2 md:gap-3">
+        <div className="border rounded-full overflow-hidden flex items-center shrink-0">
           <Button
             variant={language === "en" ? "default" : "ghost"}
             size="sm"
@@ -147,10 +142,10 @@ export function MainNav() {
         {user ? (
           <div className="flex items-center gap-2">
             {user.subscription?.status === "active" && (
-              <div className="hidden md:flex items-center gap-1 text-amber-400">
-                <Crown className="h-4 w-4" />
-                <span className="text-xs font-medium">{user.subscription.plan}</span>
-              </div>
+            <div className="hidden md:flex items-center gap-1 text-amber-400 px-2 py-1 rounded-md bg-amber-400/10">
+              <Crown className="h-4 w-4" />
+              <span className="text-xs font-medium tracking-tight">{user.subscription.plan}</span>
+            </div>
             )}
 
             <DropdownMenu>
@@ -219,10 +214,10 @@ export function MainNav() {
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <Button variant="ghost" asChild className="hidden sm:flex">
+            <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
               <Link href="/login">{t("auth.login")}</Link>
             </Button>
-            <Button asChild>
+            <Button size="sm" asChild>
               <Link href="/signup">{t("auth.signup")}</Link>
             </Button>
           </div>
@@ -231,4 +226,3 @@ export function MainNav() {
     </div>
   )
 }
-

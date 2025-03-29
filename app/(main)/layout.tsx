@@ -21,7 +21,7 @@ export default function MainLayout({
         {/* Fixed Help Button - visible on desktop only (mobile in UserWidget) */}
         <div className="fixed bottom-4 left-4 z-50 hidden md:block">
           <Button asChild variant="secondary" className="shadow-md">
-            <Link href="/help">
+            <Link href="/(main)/help">
               <HelpCircle className="h-4 w-4 mr-2" />
               Help Center
             </Link>
@@ -31,4 +31,3 @@ export default function MainLayout({
     </AuthGuard>
   )
 }
-
