@@ -21,6 +21,7 @@ const translations: Record<string, Record<string, string>> = {
     "app.loading": "Loading...",
     "app.error": "An error occurred",
     "app.success": "Success",
+    "error.modelLoad": "Failed to load 3D model. Displaying fallback.",
 
     // Navigation
     "nav.home": "Home",
@@ -110,6 +111,36 @@ const translations: Record<string, Record<string, string>> = {
     "muscles.videos": "Videos",
     "muscles.origin": "Origin",
     "muscles.insertion": "Insertion",
+    "muscles.click_to_view": "Click to view details", // Added for fallback model tooltip
+
+    // Model Views (for FallbackModel)
+    "model.front": "Front",
+    "model.back": "Back",
+    "model.side": "Side",
+    "model.legendTitle": "Muscle Legend",
+    // Fallback Muscle Names (add more as needed)
+    "muscles.pectoralis.name": "Pectoralis Major",
+    "muscles.deltoid.name": "Deltoid",
+    "muscles.biceps.name": "Biceps Brachii",
+    "muscles.rectus-abdominis.name": "Rectus Abdominis",
+    "muscles.quadriceps.name": "Quadriceps",
+    "muscles.tibialis-anterior.name": "Tibialis Anterior",
+    "muscles.obliques.name": "Obliques",
+    "muscles.forearm-flexors.name": "Forearm Flexors",
+    "muscles.adductors.name": "Adductors",
+    "muscles.sartorius.name": "Sartorius",
+    "muscles.trapezius.name": "Trapezius",
+    "muscles.latissimus-dorsi.name": "Latissimus Dorsi",
+    "muscles.triceps.name": "Triceps",
+    "muscles.gluteus-maximus.name": "Gluteus Maximus",
+    "muscles.hamstrings.name": "Hamstrings",
+    "muscles.gastrocnemius.name": "Gastrocnemius",
+    "muscles.rhomboids.name": "Rhomboids",
+    "muscles.posterior-deltoid.name": "Posterior Deltoid",
+    "muscles.infraspinatus.name": "Infraspinatus",
+    "muscles.erector-spinae.name": "Erector Spinae",
+    "muscles.gluteus-medius.name": "Gluteus Medius",
+    "muscles.soleus.name": "Soleus",
 
     // User
     "user.profile": "Profile",
@@ -132,6 +163,8 @@ const translations: Record<string, Record<string, string>> = {
     "actions.download": "Download",
     "actions.share": "Share",
     "actions.close": "Close",
+    "actions.copyLinkSuccess": "Link copied to clipboard!",
+    "actions.copyLinkError": "Failed to copy link.",
 
     // System
     "system.status": "System Status",
@@ -176,6 +209,7 @@ const translations: Record<string, Record<string, string>> = {
     "app.loading": "Chargement...",
     "app.error": "Une erreur est survenue",
     "app.success": "Succès",
+    "error.modelLoad": "Échec du chargement du modèle 3D. Affichage du modèle de secours.",
 
     // Navigation
     "nav.home": "Accueil",
@@ -265,6 +299,36 @@ const translations: Record<string, Record<string, string>> = {
     "muscles.videos": "Vidéos",
     "muscles.origin": "Origine",
     "muscles.insertion": "Insertion",
+    "muscles.click_to_view": "Cliquez pour voir les détails", // Added for fallback model tooltip
+
+    // Model Views (for FallbackModel)
+    "model.front": "Avant",
+    "model.back": "Arrière",
+    "model.side": "Côté",
+    "model.legendTitle": "Légende des Muscles",
+    // Fallback Muscle Names (French - Placeholders/Direct names)
+    "muscles.pectoralis.name": "Grand Pectoral",
+    "muscles.deltoid.name": "Deltoïde",
+    "muscles.biceps.name": "Biceps Brachial",
+    "muscles.rectus-abdominis.name": "Grand Droit de l'Abdomen",
+    "muscles.quadriceps.name": "Quadriceps",
+    "muscles.tibialis-anterior.name": "Tibial Antérieur",
+    "muscles.obliques.name": "Obliques",
+    "muscles.forearm-flexors.name": "Fléchisseurs de l'Avant-bras",
+    "muscles.adductors.name": "Adducteurs",
+    "muscles.sartorius.name": "Sartorius",
+    "muscles.trapezius.name": "Trapèze",
+    "muscles.latissimus-dorsi.name": "Grand Dorsal",
+    "muscles.triceps.name": "Triceps Brachial",
+    "muscles.gluteus-maximus.name": "Grand Fessier",
+    "muscles.hamstrings.name": "Ischio-jambiers",
+    "muscles.gastrocnemius.name": "Gastrocnémien",
+    "muscles.rhomboids.name": "Rhomboïdes",
+    "muscles.posterior-deltoid.name": "Deltoïde Postérieur",
+    "muscles.infraspinatus.name": "Infra-épineux",
+    "muscles.erector-spinae.name": "Érecteurs du Rachis",
+    "muscles.gluteus-medius.name": "Moyen Fessier",
+    "muscles.soleus.name": "Soléaire",
 
     // User
     "user.profile": "Profil",
@@ -287,6 +351,8 @@ const translations: Record<string, Record<string, string>> = {
     "actions.download": "Télécharger",
     "actions.share": "Partager",
     "actions.close": "Fermer",
+    "actions.copyLinkSuccess": "Lien copié dans le presse-papiers !",
+    "actions.copyLinkError": "Échec de la copie du lien.",
 
     // System
     "system.status": "État du Système",
@@ -331,6 +397,7 @@ const translations: Record<string, Record<string, string>> = {
     "app.loading": "Загрузка...",
     "app.error": "Произошла ошибка",
     "app.success": "Успех",
+    "error.modelLoad": "Не удалось загрузить 3D-модель. Отображается запасной вариант.",
 
     // Navigation
     "nav.home": "Главная",
@@ -420,6 +487,36 @@ const translations: Record<string, Record<string, string>> = {
     "muscles.videos": "Видео",
     "muscles.origin": "Начало",
     "muscles.insertion": "Прикрепление",
+    "muscles.click_to_view": "Нажмите для просмотра деталей", // Added for fallback model tooltip
+
+    // Model Views (for FallbackModel)
+    "model.front": "Перед",
+    "model.back": "Сзади",
+    "model.side": "Сбоку",
+    "model.legendTitle": "Легенда Мышц",
+    // Fallback Muscle Names (Russian - Placeholders/Direct names)
+    "muscles.pectoralis.name": "Большая Грудная Мышца",
+    "muscles.deltoid.name": "Дельтовидная Мышца",
+    "muscles.biceps.name": "Двуглавая Мышца Плеча",
+    "muscles.rectus-abdominis.name": "Прямая Мышца Живота",
+    "muscles.quadriceps.name": "Четырехглавая Мышца Бедра",
+    "muscles.tibialis-anterior.name": "Передняя Большеберцовая Мышца",
+    "muscles.obliques.name": "Косые Мышцы Живота",
+    "muscles.forearm-flexors.name": "Сгибатели Предплечья",
+    "muscles.adductors.name": "Приводящие Мышцы",
+    "muscles.sartorius.name": "Портняжная Мышца",
+    "muscles.trapezius.name": "Трапециевидная Мышца",
+    "muscles.latissimus-dorsi.name": "Широчайшая Мышца Спины",
+    "muscles.triceps.name": "Трехглавая Мышца Плеча",
+    "muscles.gluteus-maximus.name": "Большая Ягодичная Мышца",
+    "muscles.hamstrings.name": "Мышцы Задней Поверхности Бедра",
+    "muscles.gastrocnemius.name": "Икроножная Мышца",
+    "muscles.rhomboids.name": "Ромбовидные Мышцы",
+    "muscles.posterior-deltoid.name": "Задняя Дельтовидная Мышца",
+    "muscles.infraspinatus.name": "Подостная Мышца",
+    "muscles.erector-spinae.name": "Мышца, Выпрямляющая Позвоночник",
+    "muscles.gluteus-medius.name": "Средняя Ягодичная Мышца",
+    "muscles.soleus.name": "Камбаловидная Мышца",
 
     // User
     "user.profile": "Профиль",
@@ -442,6 +539,8 @@ const translations: Record<string, Record<string, string>> = {
     "actions.download": "Скачать",
     "actions.share": "Поделиться",
     "actions.close": "Закрыть",
+    "actions.copyLinkSuccess": "Ссылка скопирована в буфер обмена!",
+    "actions.copyLinkError": "Не удалось скопировать ссылку.",
 
     // System
     "system.status": "Статус Системы",
@@ -533,4 +632,3 @@ export function useI18n() {
   }
   return context
 }
-

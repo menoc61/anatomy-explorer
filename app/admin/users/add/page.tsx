@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 import { Loader2, ArrowLeft } from "lucide-react"
-import {AdminSidebar} from "@/components/admin/admin-sidebar"
+// Removed AdminSidebar import
 
 export default function AddUserPage() {
   const router = useRouter()
@@ -93,10 +93,10 @@ export default function AddUserPage() {
   }
 
   return (
-    <AdminSidebar>
-      <div className="container mx-auto py-6">
-        <div className="flex items-center mb-6">
-          <Button variant="ghost" size="sm" onClick={() => router.back()} className="mr-4">
+    // Removed AdminSidebar wrapper
+    <div className="container mx-auto py-6">
+      <div className="flex items-center mb-6">
+        <Button variant="ghost" size="sm" onClick={() => router.back()} className="mr-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
@@ -142,7 +142,6 @@ export default function AddUserPage() {
                   <SelectContent>
                     <SelectItem value="user">User</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="editor">Editor</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -200,6 +199,6 @@ export default function AddUserPage() {
           </CardFooter>
         </Card>
       </div>
-    </AdminSidebar>
+    // Removed AdminSidebar wrapper closing tag
   )
 }

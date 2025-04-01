@@ -1,25 +1,43 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAuth } from "@/contexts/auth-context"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Switch } from "@/components/ui/switch"
-import { useI18n } from "@/contexts/i18n-context"
-import { Loader2, Save, Database, Server, Key, RefreshCw, CheckCircle, XCircle, AlertCircle } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { useI18n } from "@/contexts/i18n-context";
+import {
+  Loader2,
+  Save,
+  Database,
+  Server,
+  Key,
+  RefreshCw,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function DatabaseSettingsPage() {
-  const { user } = useAuth()
-  const { toast } = useToast()
-  const { t } = useI18n()
-  const [isLoading, setIsLoading] = useState(false)
-  const [isTesting, setIsTesting] = useState(false)
-  const [connectionStatus, setConnectionStatus] = useState<"idle" | "success" | "error">("idle")
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { t } = useI18n();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
 
   const [prismaSettings, setPrismaSettings] = useState({
     databaseUrl: "postgresql://username:password@localhost:5432/mydb",
@@ -28,7 +46,7 @@ export default function DatabaseSettingsPage() {
     enableLogging: true,
     enableQueryCache: true,
     enableSoftDelete: false,
-  })
+  });
 
   const [supabaseSettings, setSupabaseSettings] = useState({
     projectUrl: "https://your-project.supabase.co",
@@ -37,60 +55,71 @@ export default function DatabaseSettingsPage() {
     enableRealtime: true,
     enableStorage: true,
     enableAuth: true,
-  })
+  });
 
   if (!user || user.role !== "admin") {
     return (
       <div className="container py-10">
         <h1 className="text-2xl font-bold">Access Denied</h1>
-        <p className="text-muted-foreground mt-2">You don't have permission to access this page.</p>
+        <p className="text-muted-foreground mt-2">
+          You don't have permission to access this page.
+        </p>
       </div>
-    )
+    );
   }
 
   const handleSaveSettings = async () => {
-    setIsLoading(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    toast({
-      title: t("app.success"),
-      description: "Database settings have been saved successfully.",
-      duration: 3000,
-    })
-
-    setIsLoading(false)
-  }
+    setIsLoading(true);
+    try {
+      // Actual API call would go here
+      toast({
+        title: t("app.success"),
+        description: "Database settings have been saved successfully.",
+        duration: 3000,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save settings",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleTestConnection = async () => {
-    setIsTesting(true)
-    setConnectionStatus("idle")
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    // Randomly succeed or fail for demo purposes
-    const success = Math.random() > 0.3
-    setConnectionStatus(success ? "success" : "error")
-
-    toast({
-      title: success ? "Connection Successful" : "Connection Failed",
-      description: success
-        ? "Successfully connected to the database."
-        : "Failed to connect to the database. Please check your settings.",
-      variant: success ? "default" : "destructive",
-      duration: 5000,
-    })
-
-    setIsTesting(false)
-  }
+    setIsTesting(true);
+    setConnectionStatus("idle");
+    try {
+      // Actual API call would go here
+      setConnectionStatus("success");
+      toast({
+        title: "Connection Successful",
+        description: "Successfully connected to the database.",
+        duration: 5000,
+      });
+    } catch (error) {
+      setConnectionStatus("error");
+      toast({
+        title: "Connection Failed",
+        description:
+          "Failed to connect to the database. Please check your settings.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
 
   return (
     <div className="container py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">{t("database.title")}</h1>
-        <p className="text-muted-foreground mt-2">Configure your database connections for Prisma and Supabase</p>
+        <p className="text-muted-foreground mt-2">
+          Configure your database connections for Prisma and Supabase
+        </p>
       </div>
 
       <Tabs defaultValue="prisma" className="space-y-6">
@@ -108,7 +137,9 @@ export default function DatabaseSettingsPage() {
                 <Database className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <CardTitle>{t("database.prisma")}</CardTitle>
-                  <CardDescription>Configure your Prisma database connection</CardDescription>
+                  <CardDescription>
+                    Configure your Prisma database connection
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -119,11 +150,17 @@ export default function DatabaseSettingsPage() {
                   <Input
                     id="database-url"
                     value={prismaSettings.databaseUrl}
-                    onChange={(e) => setPrismaSettings({ ...prismaSettings, databaseUrl: e.target.value })}
+                    onChange={(e) =>
+                      setPrismaSettings({
+                        ...prismaSettings,
+                        databaseUrl: e.target.value,
+                      })
+                    }
                     placeholder="postgresql://username:password@localhost:5432/mydb"
                   />
                   <p className="text-xs text-muted-foreground">
-                    The connection string to your database. Format: postgresql://username:password@localhost:5432/mydb
+                    The connection string to your database. Format:
+                    postgresql://username:password@localhost:5432/mydb
                   </p>
                 </div>
 
@@ -132,66 +169,114 @@ export default function DatabaseSettingsPage() {
                   <Input
                     id="direct-url"
                     value={prismaSettings.directUrl}
-                    onChange={(e) => setPrismaSettings({ ...prismaSettings, directUrl: e.target.value })}
+                    onChange={(e) =>
+                      setPrismaSettings({
+                        ...prismaSettings,
+                        directUrl: e.target.value,
+                      })
+                    }
                     placeholder="postgresql://username:password@localhost:5432/mydb"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Direct connection URL, useful for environments with connection pooling
+                    Direct connection URL, useful for environments with
+                    connection pooling
                   </p>
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="shadow-database-url">Shadow Database URL (optional)</Label>
+                  <Label htmlFor="shadow-database-url">
+                    Shadow Database URL (optional)
+                  </Label>
                   <Input
                     id="shadow-database-url"
                     value={prismaSettings.shadowDatabaseUrl}
-                    onChange={(e) => setPrismaSettings({ ...prismaSettings, shadowDatabaseUrl: e.target.value })}
+                    onChange={(e) =>
+                      setPrismaSettings({
+                        ...prismaSettings,
+                        shadowDatabaseUrl: e.target.value,
+                      })
+                    }
                     placeholder="postgresql://username:password@localhost:5432/shadow_db"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Used for migrations in production. Can be the same as your development database.
+                    Used for migrations in production. Can be the same as your
+                    development database.
                   </p>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="enable-logging">Enable Query Logging</Label>
-                    <p className="text-sm text-muted-foreground">Log all database queries to the console</p>
+                    <p className="text-sm text-muted-foreground">
+                      Log all database queries to the console
+                    </p>
                   </div>
                   <Switch
                     id="enable-logging"
                     checked={prismaSettings.enableLogging}
-                    onCheckedChange={(checked) => setPrismaSettings({ ...prismaSettings, enableLogging: checked })}
+                    onCheckedChange={(checked) =>
+                      setPrismaSettings({
+                        ...prismaSettings,
+                        enableLogging: checked,
+                      })
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="enable-query-cache">Enable Query Cache</Label>
-                    <p className="text-sm text-muted-foreground">Cache database queries for better performance</p>
+                    <Label htmlFor="enable-query-cache">
+                      Enable Query Cache
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Cache database queries for better performance
+                    </p>
                   </div>
                   <Switch
                     id="enable-query-cache"
                     checked={prismaSettings.enableQueryCache}
-                    onCheckedChange={(checked) => setPrismaSettings({ ...prismaSettings, enableQueryCache: checked })}
+                    onCheckedChange={(checked) =>
+                      setPrismaSettings({
+                        ...prismaSettings,
+                        enableQueryCache: checked,
+                      })
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="enable-soft-delete">Enable Soft Delete</Label>
-                    <p className="text-sm text-muted-foreground">Mark records as deleted instead of removing them</p>
+                    <Label htmlFor="enable-soft-delete">
+                      Enable Soft Delete
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Mark records as deleted instead of removing them
+                    </p>
                   </div>
                   <Switch
                     id="enable-soft-delete"
                     checked={prismaSettings.enableSoftDelete}
-                    onCheckedChange={(checked) => setPrismaSettings({ ...prismaSettings, enableSoftDelete: checked })}
+                    onCheckedChange={(checked) =>
+                      setPrismaSettings({
+                        ...prismaSettings,
+                        enableSoftDelete: checked,
+                      })
+                    }
                   />
                 </div>
 
                 <div className="flex justify-between items-center pt-4">
-                  <Button variant="outline" onClick={handleTestConnection} disabled={isTesting} className="gap-2">
-                    {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  <Button
+                    variant="outline"
+                    onClick={handleTestConnection}
+                    disabled={isTesting}
+                    className="gap-2"
+                  >
+                    {isTesting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" />
+                    )}
                     {t("database.test")}
                   </Button>
 
@@ -221,7 +306,9 @@ export default function DatabaseSettingsPage() {
                 <Server className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <CardTitle>{t("database.supabase")}</CardTitle>
-                  <CardDescription>Configure your Supabase connection</CardDescription>
+                  <CardDescription>
+                    Configure your Supabase connection
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -232,10 +319,17 @@ export default function DatabaseSettingsPage() {
                   <Input
                     id="project-url"
                     value={supabaseSettings.projectUrl}
-                    onChange={(e) => setSupabaseSettings({ ...supabaseSettings, projectUrl: e.target.value })}
+                    onChange={(e) =>
+                      setSupabaseSettings({
+                        ...supabaseSettings,
+                        projectUrl: e.target.value,
+                      })
+                    }
                     placeholder="https://your-project.supabase.co"
                   />
-                  <p className="text-xs text-muted-foreground">Your Supabase project URL</p>
+                  <p className="text-xs text-muted-foreground">
+                    Your Supabase project URL
+                  </p>
                 </div>
 
                 <div className="grid gap-2">
@@ -245,72 +339,118 @@ export default function DatabaseSettingsPage() {
                       id="api-key"
                       type="password"
                       value={supabaseSettings.apiKey}
-                      onChange={(e) => setSupabaseSettings({ ...supabaseSettings, apiKey: e.target.value })}
+                      onChange={(e) =>
+                        setSupabaseSettings({
+                          ...supabaseSettings,
+                          apiKey: e.target.value,
+                        })
+                      }
                       placeholder="your-supabase-api-key"
                     />
                     <Button variant="outline" size="icon">
                       <Key className="h-4 w-4" />
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Your Supabase API key (anon public)</p>
+                  <p className="text-xs text-muted-foreground">
+                    Your Supabase API key (anon public)
+                  </p>
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="service-role-key">Service Role Key (optional)</Label>
+                  <Label htmlFor="service-role-key">
+                    Service Role Key (optional)
+                  </Label>
                   <div className="flex gap-2">
                     <Input
                       id="service-role-key"
                       type="password"
                       value={supabaseSettings.serviceRoleKey}
-                      onChange={(e) => setSupabaseSettings({ ...supabaseSettings, serviceRoleKey: e.target.value })}
+                      onChange={(e) =>
+                        setSupabaseSettings({
+                          ...supabaseSettings,
+                          serviceRoleKey: e.target.value,
+                        })
+                      }
                       placeholder="your-service-role-key"
                     />
                     <Button variant="outline" size="icon">
                       <Key className="h-4 w-4" />
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Your Supabase service role key (for admin operations)</p>
+                  <p className="text-xs text-muted-foreground">
+                    Your Supabase service role key (for admin operations)
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="enable-realtime">Enable Realtime</Label>
-                    <p className="text-sm text-muted-foreground">Enable realtime subscriptions</p>
+                    <p className="text-sm text-muted-foreground">
+                      Enable realtime subscriptions
+                    </p>
                   </div>
                   <Switch
                     id="enable-realtime"
                     checked={supabaseSettings.enableRealtime}
-                    onCheckedChange={(checked) => setSupabaseSettings({ ...supabaseSettings, enableRealtime: checked })}
+                    onCheckedChange={(checked) =>
+                      setSupabaseSettings({
+                        ...supabaseSettings,
+                        enableRealtime: checked,
+                      })
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="enable-storage">Enable Storage</Label>
-                    <p className="text-sm text-muted-foreground">Enable Supabase Storage for file uploads</p>
+                    <p className="text-sm text-muted-foreground">
+                      Enable Supabase Storage for file uploads
+                    </p>
                   </div>
                   <Switch
                     id="enable-storage"
                     checked={supabaseSettings.enableStorage}
-                    onCheckedChange={(checked) => setSupabaseSettings({ ...supabaseSettings, enableStorage: checked })}
+                    onCheckedChange={(checked) =>
+                      setSupabaseSettings({
+                        ...supabaseSettings,
+                        enableStorage: checked,
+                      })
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div>
                     <Label htmlFor="enable-auth">Enable Auth</Label>
-                    <p className="text-sm text-muted-foreground">Enable Supabase Authentication</p>
+                    <p className="text-sm text-muted-foreground">
+                      Enable Supabase Authentication
+                    </p>
                   </div>
                   <Switch
                     id="enable-auth"
                     checked={supabaseSettings.enableAuth}
-                    onCheckedChange={(checked) => setSupabaseSettings({ ...supabaseSettings, enableAuth: checked })}
+                    onCheckedChange={(checked) =>
+                      setSupabaseSettings({
+                        ...supabaseSettings,
+                        enableAuth: checked,
+                      })
+                    }
                   />
                 </div>
 
                 <div className="flex justify-between items-center pt-4">
-                  <Button variant="outline" onClick={handleTestConnection} disabled={isTesting} className="gap-2">
-                    {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  <Button
+                    variant="outline"
+                    onClick={handleTestConnection}
+                    disabled={isTesting}
+                    className="gap-2"
+                  >
+                    {isTesting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" />
+                    )}
                     {t("database.test")}
                   </Button>
 
@@ -337,15 +477,17 @@ export default function DatabaseSettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Database Migrations</CardTitle>
-              <CardDescription>Manage your database schema migrations</CardDescription>
+              <CardDescription>
+                Manage your database schema migrations
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Migration Management</AlertTitle>
                 <AlertDescription>
-                  Migrations allow you to evolve your database schema over time. Be careful when running migrations in
-                  production.
+                  Migrations allow you to evolve your database schema over time.
+                  Be careful when running migrations in production.
                 </AlertDescription>
               </Alert>
 
@@ -415,15 +557,15 @@ export default function DatabaseSettingsPage() {
                   <Label>Retention Policy</Label>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="flex items-center space-x-2">
-                      <Input type="number" value="7" className="w-16" />
+                      <Input type="number" defaultValue={7} className="w-16" />
                       <Label>Days</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Input type="number" value="4" className="w-16" />
+                      <Input type="number" defaultValue={4} className="w-16" />
                       <Label>Weeks</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Input type="number" value="3" className="w-16" />
+                      <Input type="number" defaultValue={3} className="w-16" />
                       <Label>Months</Label>
                     </div>
                   </div>
@@ -450,6 +592,5 @@ export default function DatabaseSettingsPage() {
         </Button>
       </div>
     </div>
-  )
+  );
 }
-

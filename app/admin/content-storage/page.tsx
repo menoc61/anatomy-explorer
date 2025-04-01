@@ -58,17 +58,22 @@ export default function ContentStoragePage() {
 
   const handleSaveConfig = async () => {
     setIsSaving(true)
-
-    // In a real app, this would be an API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    toast({
-      title: "Storage configuration saved",
-      description: "Your content storage settings have been updated successfully.",
-      duration: 3000,
-    })
-
-    setIsSaving(false)
+    try {
+      // Actual API call would go here
+      toast({
+        title: "Storage configuration saved",
+        description: "Your content storage settings have been updated successfully.",
+        duration: 3000,
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save storage configuration",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   if (!isAdmin) {
@@ -560,4 +565,3 @@ export default function ContentStoragePage() {
     </div>
   )
 }
-

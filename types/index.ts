@@ -45,9 +45,13 @@ export interface Video {
   description: string
   url: string
   thumbnail: string
-  duration: number
+  duration: string
+  status: "published" | "draft" | "review"
+  category: string
+  views?: number 
+  uploadDate?: string 
   isPremium: boolean
-  muscleId: string
+  muscleId?: string 
   createdAt: string
   updatedAt: string
 }
@@ -67,5 +71,9 @@ export interface Dashboard {
     premium: number
     professional: number
   }
+  commentStats: {
+    total: number
+    flagged: number
+    pending: number
+  }
 }
-

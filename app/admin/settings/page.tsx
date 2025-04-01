@@ -45,6 +45,12 @@ export default function AdminSettingsPage() {
     defaultSubscriptionPlan: "trial",
     termsOfService: "Standard terms of service text...",
     privacyPolicy: "Standard privacy policy text...",
+    subscriptionPrices: {
+      trial: 0,
+      basic: 9.99,
+      premium: 19.99,
+      professional: 29.99
+    }
   })
 
   if (!user || user.role !== "admin") {
@@ -302,6 +308,72 @@ export default function AdminSettingsPage() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="grid gap-4">
+                  <Label>Subscription Prices</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="basic-price">Basic Plan</Label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">$</span>
+                        <Input
+                          id="basic-price"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={appSettings.subscriptionPrices.basic}
+                          onChange={(e) => setAppSettings({
+                            ...appSettings,
+                            subscriptionPrices: {
+                              ...appSettings.subscriptionPrices,
+                              basic: parseFloat(e.target.value) || 0
+                            }
+                          })}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="premium-price">Premium Plan</Label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">$</span>
+                        <Input
+                          id="premium-price"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={appSettings.subscriptionPrices.premium}
+                          onChange={(e) => setAppSettings({
+                            ...appSettings,
+                            subscriptionPrices: {
+                              ...appSettings.subscriptionPrices,
+                              premium: parseFloat(e.target.value) || 0
+                            }
+                          })}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="pro-price">Professional Plan</Label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">$</span>
+                        <Input
+                          id="pro-price"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={appSettings.subscriptionPrices.professional}
+                          onChange={(e) => setAppSettings({
+                            ...appSettings,
+                            subscriptionPrices: {
+                              ...appSettings.subscriptionPrices,
+                              professional: parseFloat(e.target.value) || 0
+                            }
+                          })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -387,4 +459,3 @@ export default function AdminSettingsPage() {
     </div>
   )
 }
-

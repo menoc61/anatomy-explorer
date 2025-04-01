@@ -39,60 +39,26 @@ export default function BackupPage() {
   const [retentionPeriod, setRetentionPeriod] = useState("30")
   const { toast } = useToast()
 
-  const handleBackup = () => {
+  const handleBackup = async () => {
     setBackupInProgress(true)
     setBackupProgress(0)
-
-    // Simulate backup progress
-    const interval = setInterval(() => {
-      setBackupProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          return 100
-        }
-        return prev + 5
-      })
-    }, 300)
-
-    // Simulate backup completion
-    setTimeout(() => {
-      clearInterval(interval)
-      setBackupProgress(100)
-      setBackupInProgress(false)
-
-      toast({
-        title: "Backup completed successfully",
-        description: "Your data has been backed up to Google Drive.",
-      })
-    }, 6000)
+    // Actual backup implementation would go here
+    // This is now client-side only
+    toast({
+      title: "Backup started",
+      description: "Backup process has begun.",
+    })
   }
 
-  const handleRestore = () => {
-    setRestoreInProgress(true)
+  const handleRestore = async () => {
+    setRestoreInProgress(true)  
     setRestoreProgress(0)
-
-    // Simulate restore progress
-    const interval = setInterval(() => {
-      setRestoreProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          return 100
-        }
-        return prev + 4
-      })
-    }, 400)
-
-    // Simulate restore completion
-    setTimeout(() => {
-      clearInterval(interval)
-      setRestoreProgress(100)
-      setRestoreInProgress(false)
-
-      toast({
-        title: "Restore completed successfully",
-        description: "Your data has been restored from the selected backup.",
-      })
-    }, 10000)
+    // Actual restore implementation would go here
+    // This is now client-side only
+    toast({
+      title: "Restore started",
+      description: "Restore process has begun.", 
+    })
   }
 
   const handleConnectGoogleDrive = () => {
@@ -195,7 +161,10 @@ export default function BackupPage() {
                         <span>{backupProgress}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div className="bg-primary h-2.5 rounded-full" style={{ width: `${backupProgress}%` }}></div>
+                        <div 
+                          className={`bg-primary h-2.5 rounded-full progress-bar`} 
+                          data-progress={backupProgress}
+                        ></div>
                       </div>
                     </div>
                   )}
@@ -298,7 +267,10 @@ export default function BackupPage() {
                         <span>{restoreProgress}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div className="bg-primary h-2.5 rounded-full" style={{ width: `${restoreProgress}%` }}></div>
+                        <div 
+                          className="bg-primary h-2.5 rounded-full progress-bar" 
+                          data-progress-width={restoreProgress}
+                        ></div>
                       </div>
                     </div>
                   )}
@@ -478,7 +450,7 @@ export default function BackupPage() {
                       <span>12.4 GB / 15 GB</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: "82%" }}></div>
+                      <div className="bg-blue-500 h-2 rounded-full progress-bar"></div>
                     </div>
                   </div>
                   <div className="mt-4 flex justify-between">
@@ -571,4 +543,3 @@ export default function BackupPage() {
     </div>
   )
 }
-

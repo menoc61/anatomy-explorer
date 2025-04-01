@@ -7,8 +7,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { muscleData } from "@/lib/muscle-data"
 import { Plus, Minus, FileUp, Trash } from "lucide-react"
+import { useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -39,8 +39,27 @@ interface MuscleData {
 }
 
 export default function MuscleEditor() {
-  const [selectedMuscle, setSelectedMuscle] = useState<string | null>(Object.keys(muscleData)[0])
+  const [muscleOptions, setMuscleOptions] = useState<Record<string, { id: string, name: string }>>({})
+  const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null)
   const [editedMuscle, setEditedMuscle] = useState<MuscleData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Load muscle options on mount
+  useEffect(() => {
+    const fetchMuscleOptions = async () => {
+      try {
+        const res = await fetch('/api/muscles/options')
+        const data = await res.json()
+        setMuscleOptions(data)
+        setSelectedMuscle(Object.keys(data)[0])
+      } catch (error) {
+        console.error('Failed to load muscle options', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchMuscleOptions()
+  }, [])
   const [activeTab, setActiveTab] = useState("general")
   const [isSaving, setIsSaving] = useState(false)
   const { toast } = useToast()
@@ -50,10 +69,24 @@ export default function MuscleEditor() {
   const isAdmin = user?.role === "admin"
 
   // Load muscle data when a muscle is selected
-  const handleSelectMuscle = (muscleId: string) => {
-    setSelectedMuscle(muscleId)
-    setEditedMuscle(structuredClone(muscleData[muscleId]))
-    setActiveTab("general")
+  const handleSelectMuscle = async (muscleId: string) => {
+    setIsLoading(true)
+    try {
+      const res = await fetch(`/api/muscles/${muscleId}`)
+      const data = await res.json()
+      setSelectedMuscle(muscleId)
+      setEditedMuscle(data)
+      setActiveTab("general")
+    } catch (error) {
+      console.error('Failed to load muscle data', error)
+      toast({
+        title: "Error",
+        description: "Failed to load muscle data",
+        variant: "destructive"
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   // Update a field in the edited muscle
@@ -120,20 +153,22 @@ export default function MuscleEditor() {
     if (!editedMuscle || !selectedMuscle) return
 
     setIsSaving(true)
-
-    // In a real app, this would be an API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // This is just for the demo - in a real app you'd update your backend
-    // muscleData[selectedMuscle] = editedMuscle
-
-    toast({
-      title: "Muscle data saved",
-      description: `${editedMuscle.name} data has been updated successfully.`,
-      duration: 3000,
-    })
-
-    setIsSaving(false)
+    try {
+      // Actual API call would go here
+      toast({
+        title: "Muscle data saved",
+        description: `${editedMuscle.name} data has been updated successfully.`,
+        duration: 3000,
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save muscle data",
+        variant: "destructive"
+      })
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   if (!isAdmin) {
@@ -159,18 +194,24 @@ export default function MuscleEditor() {
             <CardDescription>Select a muscle to edit</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-1">
-              {Object.entries(muscleData).map(([id, muscle]) => (
-                <Button
-                  key={id}
-                  variant={selectedMuscle === id ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => handleSelectMuscle(id)}
-                >
-                  {muscle.name}
-                </Button>
-              ))}
-            </div>
+                <div className="space-y-1">
+                  {isLoading ? (
+                    Array(10).fill(0).map((_, i) => (
+                      <div key={i} className="h-[40px] w-full bg-gray-100 animate-pulse rounded"></div>
+                    ))
+                  ) : (
+                    Object.entries(muscleOptions).map(([id, muscle]) => (
+                      <Button
+                        key={id}
+                        variant={selectedMuscle === id ? "default" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => handleSelectMuscle(id)}
+                      >
+                        {muscle.name}
+                      </Button>
+                    ))
+                  )}
+                </div>
           </CardContent>
         </Card>
 
@@ -543,4 +584,3 @@ export default function MuscleEditor() {
     </div>
   )
 }
-

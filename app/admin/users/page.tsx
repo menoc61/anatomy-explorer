@@ -29,6 +29,7 @@ import {
 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import Link from "next/link"
 
 // Mock user data
 const mockUsers = [
@@ -158,8 +159,10 @@ export default function UsersPage() {
           <p className="text-muted-foreground">Manage user accounts and permissions</p>
         </div>
         <Button>
+          <Link href="/admin/users/add">
           <Plus className="mr-2 h-4 w-4" />
           Add User
+          </Link>
         </Button>
       </div>
 
@@ -267,7 +270,10 @@ export default function UsersPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={user.status === "active" ? "success" : "secondary"}>
+                          <Badge
+                            variant={user.status === "active" ? "default" : "secondary"}
+                            className={user.status === "active" ? "bg-green-100 text-green-800" : ""}
+                          >
                             {user.status === "active" ? "Active" : "Inactive"}
                           </Badge>
                         </TableCell>
@@ -342,4 +348,3 @@ export default function UsersPage() {
     </div>
   )
 }
-

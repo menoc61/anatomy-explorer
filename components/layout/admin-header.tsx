@@ -23,8 +23,8 @@ export function AdminHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="container flex h-16 items-center justify-between px-4 sm:px-6">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">
@@ -32,8 +32,8 @@ export function AdminHeader() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="pr-0 sm:max-w-xs">
-              <AdminSidebar />
+            <SheetContent side="left" className="pr-0 w-[280px]">
+              <AdminSidebar mobile />
             </SheetContent>
           </Sheet>
           <div className="font-bold text-xl">Admin Dashboard</div>
@@ -87,4 +87,3 @@ export function AdminHeader() {
     </header>
   )
 }
-

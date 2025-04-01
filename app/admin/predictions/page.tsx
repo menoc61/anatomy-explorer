@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from "recharts"
 import { Loader2, Download } from "lucide-react"
-import {AdminSidebar} from "@/components/admin/admin-sidebar"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 // Mock data for user growth prediction
@@ -132,8 +131,7 @@ export default function PredictionsPage() {
   }
 
   return (
-    <AdminSidebar>
-      <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Predictions & Analytics</h1>
           <div className="flex gap-2">
@@ -466,7 +464,5 @@ export default function PredictionsPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminSidebar>
-  )
+    )
 }
-

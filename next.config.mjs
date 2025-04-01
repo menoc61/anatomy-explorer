@@ -17,9 +17,14 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
-    webpackBuildWorker: true,
-    parallelServerBuildTraces: true,
-    parallelServerCompiles: true,
+    webpackBuildWorker: true, // Enabled for v0 projects
+    optimizeCss: true,
+    largePageDataBytes: 128000, // Increased page data limit
+  },
+  webpack: (config) => {
+    config.cache = true;
+    config.parallelism = 1; // Reduce parallelism for stability
+    return config;
   },
   async redirects() {
     return [

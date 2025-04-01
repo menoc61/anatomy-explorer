@@ -436,18 +436,6 @@ export default function AdminDashboardPage() {
                       <span>Upload Video</span>
                     </Link>
                   </Button>
-                  <Button className="h-auto py-4 flex flex-col items-center justify-center gap-2" asChild>
-                    <Link href="/admin/muscles/add">
-                      <Dumbbell className="h-5 w-5" />
-                      <span>Add Muscle</span>
-                    </Link>
-                  </Button>
-                  <Button className="h-auto py-4 flex flex-col items-center justify-center gap-2" asChild>
-                    <Link href="/admin/reports">
-                      <BarChart2 className="h-5 w-5" />
-                      <span>View Reports</span>
-                    </Link>
-                  </Button>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">

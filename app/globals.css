@@ -4,6 +4,20 @@
 
 @layer base {
   :root {
+    /* Fallback Model SVG Colors */
+    --fallback-body-fill: theme(colors.slate.300); /* Lighter for light theme */
+    --fallback-body-stroke: theme(colors.slate.500);
+    --fallback-muscle-fill: theme(colors.primary.DEFAULT / 0.2);
+    --fallback-muscle-stroke: theme(colors.primary.DEFAULT / 0.4);
+    --fallback-muscle-fill-hover: theme(colors.primary.DEFAULT / 0.5);
+    --fallback-muscle-stroke-hover: theme(colors.primary.DEFAULT / 0.8);
+    --fallback-label-circle-fill: theme(colors.background / 0.8);
+    --fallback-label-circle-stroke: theme(colors.primary.DEFAULT / 0.8);
+    --fallback-label-circle-fill-hover: theme(colors.primary.DEFAULT / 0.9);
+    --fallback-label-circle-stroke-hover: theme(colors.primary.foreground);
+    --fallback-label-text: theme(colors.foreground);
+    --fallback-label-text-hover: theme(colors.primary.foreground);
+
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -36,6 +50,21 @@
   }
 
   .dark {
+    /* Fallback Model SVG Colors (Dark Theme) */
+    --fallback-body-fill: theme(colors.slate.700); /* Darker for dark theme */
+    --fallback-body-stroke: theme(colors.slate.500);
+    /* Muscle colors can often remain similar, relying on primary */
+    --fallback-muscle-fill: theme(colors.primary.DEFAULT / 0.2);
+    --fallback-muscle-stroke: theme(colors.primary.DEFAULT / 0.4);
+    --fallback-muscle-fill-hover: theme(colors.primary.DEFAULT / 0.5);
+    --fallback-muscle-stroke-hover: theme(colors.primary.DEFAULT / 0.8);
+    --fallback-label-circle-fill: theme(colors.background / 0.8);
+    --fallback-label-circle-stroke: theme(colors.primary.DEFAULT / 0.8);
+    --fallback-label-circle-fill-hover: theme(colors.primary.DEFAULT / 0.9);
+    --fallback-label-circle-stroke-hover: theme(colors.primary.foreground);
+    --fallback-label-text: theme(colors.foreground);
+    --fallback-label-text-hover: theme(colors.primary.foreground);
+
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
@@ -93,4 +122,3 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
-

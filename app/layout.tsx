@@ -5,14 +5,18 @@ import "./globals.css"
 import ClientLayout from "./client-layout"
 // Import the service worker registration component
 import ServiceWorkerRegistration from "./sw-register"
-import { ThemeProvider } from "@/components/theme-provider"
+// ThemeProvider is now handled within ClientLayout
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Anatomy Explorer SaaS",
   description: "Interactive 3D human anatomy explorer with subscription plans",
-    generator: 'v0.dev'
+    generator: 'v0.dev',
+    icons: {
+      icon: "/placeholder-logo.svg",
+      apple: "/placeholder-logo.png", 
+    },
 }
 
 export default function RootLayout({
@@ -22,18 +26,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <ServiceWorkerRegistration />
+        {/* ClientLayout now handles ThemeProvider internally */}
         <ClientLayout>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            {children}
-          </ThemeProvider>
+          {children}
         </ClientLayout>
       </body>
     </html>
   )
 }
-
-
-
-import './globals.css'
