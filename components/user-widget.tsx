@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,36 +15,48 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Loader2, User, LogOut, Shield, Download, CreditCard, HelpCircle, Globe, Moon, Sun, Laptop } from "lucide-react"
-import { useAuth } from "@/contexts/auth-context"
-import { useLanguage } from "@/contexts/language-context"
-import { useTheme } from "next-themes"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Loader2,
+  User,
+  LogOut,
+  Shield,
+  Download,
+  CreditCard,
+  HelpCircle,
+  Globe,
+  Moon,
+  Sun,
+  Laptop,
+} from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { useLanguage } from "@/contexts/language-context";
+import { useTheme } from "next-themes";
 
 export default function UserWidget() {
-  const router = useRouter()
-  const { user, logout, isAdmin } = useAuth()
-  const { language, setLanguage, availableLanguages, t } = useLanguage()
-  const { theme, setTheme } = useTheme()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const router = useRouter();
+  const { user, logout, isAdmin } = useAuth();
+  const { language, setLanguage, availableLanguages, t } = useLanguage();
+  const { theme, setTheme } = useTheme();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    setIsLoggingOut(true)
-    logout()
-    router.push("/login")
-  }
+    setIsLoggingOut(true);
+    logout();
+    router.push("/login");
+  };
 
   // Get user initials for avatar fallback
   const getUserInitials = () => {
-    if (!user?.name) return "U"
+    if (!user?.name) return "U";
     return user.name
       .split(" ")
       .map((name) => name[0])
       .join("")
       .toUpperCase()
-      .substring(0, 2)
-  }
+      .substring(0, 2);
+  };
 
   if (!user) {
     return (
@@ -56,17 +68,23 @@ export default function UserWidget() {
           <Link href="/signup">Sign up</Link>
         </Button>
       </div>
-    )
+    );
   }
 
-  const isPremium = user?.subscription?.plan === "premium" || user?.subscription?.plan === "professional"
+  const isPremium =
+    user?.subscription?.plan === "basic" ||
+    user?.subscription?.plan === "premium" ||
+    user?.subscription?.plan === "professional";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={`https://avatar.vercel.sh/${user.email}`} alt={user.name || "User"} />
+            <AvatarImage
+              src={`https://avatar.vercel.sh/${user.email}`}
+              alt={user.name || "User"}
+            />
             <AvatarFallback>{getUserInitials()}</AvatarFallback>
           </Avatar>
         </Button>
@@ -75,10 +93,15 @@ export default function UserWidget() {
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
             {isPremium && (
               <span className="mt-1 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                {user.subscription.plan.charAt(0).toUpperCase() + user.subscription.plan.slice(1)}
+                {user.subscription?.plan
+                  ? user.subscription.plan.charAt(0).toUpperCase() +
+                    user.subscription.plan.slice(1)
+                  : ""}
               </span>
             )}
           </div>
@@ -103,13 +126,6 @@ export default function UserWidget() {
             <Link href="/account/subscription">
               <CreditCard className="mr-2 h-4 w-4" />
               <span>{t("user.subscription")}</span>
-            </Link>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem asChild>
-            <Link href="/help">
-              <HelpCircle className="mr-2 h-4 w-4" />
-              <span>{t("help.title")}</span>
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -137,7 +153,11 @@ export default function UserWidget() {
 
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              {theme === "dark" ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}
+              {theme === "dark" ? (
+                <Moon className="mr-2 h-4 w-4" />
+              ) : (
+                <Sun className="mr-2 h-4 w-4" />
+              )}
               <span>{t("user.theme")}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
@@ -207,6 +227,5 @@ export default function UserWidget() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
-

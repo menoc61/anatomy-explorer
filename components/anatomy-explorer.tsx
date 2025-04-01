@@ -198,9 +198,9 @@ export default function AnatomyExplorer() {
             <Button
               variant="default"
               className="bg-primary text-primary-foreground text-xs"
-              onClick={() => router.push("/account/subscription")}
+              onClick={() => router.push("/login")}
             >
-              <Crown className="h-3 w-3 mr-1" /> Subscribe for 3D
+              <Crown className="h-3 w-3 mr-1" /> Login for 3D
             </Button>
           )}
 
